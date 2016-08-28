@@ -16,10 +16,10 @@ contract HelloWorld {
 	
 	// *********************************************
 	// * Modifier
-    modifier onlyOwner {
-        if (msg.sender != owner) throw;
-        _
-    }
+	modifier onlyOwner {
+		if (msg.sender != owner) throw;
+		_
+	}
 	
 	// *********************************************
 	// * Constructor 
@@ -47,8 +47,8 @@ contract HelloWorld {
 	// *********************************************
 	// * kill 
 	// @description: Function to recover the funds on the contract
-    function kill() onlyOwner { 
-        selfdestruct(owner); 
-    }
+	function kill() onlyOwner { 
+		selfdestruct(owner); 
+	}
 
 }
