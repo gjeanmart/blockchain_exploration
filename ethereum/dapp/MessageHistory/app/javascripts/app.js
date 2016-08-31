@@ -16,32 +16,49 @@ function getLastMessage() {
   
   console.log(c);
 
-  c.getLastMessage.call({from: account}).then(function(sender, text, date) {
+  c.getLastMessage.call({from: account}).then(function(result) {
+	  console.log(result);
+
+	  
     var lastMessage_element = document.getElementById("lastMessage");
-    lastMessage_element.innerHTML = text;
+    lastMessage_element.innerHTML = result[1];
+	
   }).catch(function(e) {
     console.log(e);
     setStatus("Error getting last message; see log.");
   });
 };
 
-function send() {
+function sendMessage() {
   var c = MessageHistory.deployed();
+  
+  console.log(c);
 
   var message = document.getElementById("message").value;
-
-  setStatus("Initiating transaction... (please wait)");
-
-  meta.sendMessage(message, {from: account}).then(function() {
+  c.sendMessage(message, {from: account}).then(function(result) {
     setStatus("Transaction complete!");
-    refreshBalance();
+    getLastMessage();
+	getBalance(account);
+	
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error sending msg; see log.");
+    setStatus("Error getting last message; see log.");
   });
 };
 
+function getBalance(account) {
+
+	var balance =  web3.fromWei(web3.eth.getBalance(account), "ether");
+    var balance_element = document.getElementById("balance");
+    balance_element.innerHTML = balance;
+
+};
+
 window.onload = function() {
+	web3.setProvider(new web3.providers.HttpProvider('http://192.158.29.106:8545'));
+
+
+	
   web3.eth.getAccounts(function(err, accs) {
     if (err != null) {
       alert("There was an error fetching your accounts.");
@@ -59,6 +76,7 @@ window.onload = function() {
 	console.log(account);
 	
     setAddress(account);
+	getBalance(account);
     getLastMessage();
   });
 }

@@ -47,7 +47,10 @@ contract MessageHistory {
 	// * getLastMessage 
 	// @description
 	function getLastMessage() returns (address, string, uint) {
-		uint i = messageHistory.length - 1;
+		if(messageHistory.length == 0) {
+			throw;
+		}
+		uint256 i = messageHistory.length - 1;
 
 		return (messageHistory[i].sender, messageHistory[i].text, messageHistory[i].date);
 	}
