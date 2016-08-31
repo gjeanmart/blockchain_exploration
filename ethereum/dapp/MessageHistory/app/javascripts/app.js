@@ -13,13 +13,15 @@ function setAddress(address) {
 
 function getLastMessage() {
   var c = MessageHistory.deployed();
+  
+  console.log(c);
 
   c.getLastMessage.call({from: account}).then(function(sender, text, date) {
     var lastMessage_element = document.getElementById("lastMessage");
     lastMessage_element.innerHTML = text;
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error getting balance; see log.");
+    setStatus("Error getting last message; see log.");
   });
 };
 
@@ -35,7 +37,7 @@ function send() {
     refreshBalance();
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error sending coin; see log.");
+    setStatus("Error sending msg; see log.");
   });
 };
 
@@ -54,6 +56,8 @@ window.onload = function() {
     accounts = accs;
     account = accounts[0];
 
+	console.log(account);
+	
     setAddress(account);
     getLastMessage();
   });
