@@ -6,27 +6,31 @@ function setStatus(message) {
   status.innerHTML = message;
 };
 
-function refreshBalance() {
-  var meta = MetaCoin.deployed();
+function setAddress(address) {
+    var address_element = document.getElementById("address");
+    address_element.innerHTML = address;
+};
 
-  meta.getBalance.call(account, {from: account}).then(function(value) {
-    var balance_element = document.getElementById("balance");
-    balance_element.innerHTML = value.valueOf();
+function getLastMessage() {
+  var c = MessageHistory.deployed();
+
+  c.getLastMessage.call({from: account}).then(function(sender, text, date) {
+    var lastMessage_element = document.getElementById("lastMessage");
+    lastMessage_element.innerHTML = text;
   }).catch(function(e) {
     console.log(e);
     setStatus("Error getting balance; see log.");
   });
 };
 
-function sendCoin() {
-  var meta = MetaCoin.deployed();
+function send() {
+  var c = MessageHistory.deployed();
 
-  var amount = parseInt(document.getElementById("amount").value);
-  var receiver = document.getElementById("receiver").value;
+  var message = document.getElementById("message").value;
 
   setStatus("Initiating transaction... (please wait)");
 
-  meta.sendCoin(receiver, amount, {from: account}).then(function() {
+  meta.sendMessage(message, {from: account}).then(function() {
     setStatus("Transaction complete!");
     refreshBalance();
   }).catch(function(e) {
@@ -50,6 +54,7 @@ window.onload = function() {
     accounts = accs;
     account = accounts[0];
 
-    refreshBalance();
+    setAddress(account);
+    getLastMessage();
   });
 }
