@@ -4,7 +4,7 @@ contract MessageHistory {
 	// * Struct 
     	struct Message {
         	address sender;
-        	string  text;
+        	bytes32  text;
         	uint    date;
     	}
 
@@ -31,7 +31,7 @@ contract MessageHistory {
 	// *********************************************
 	// * sendMessage 
 	// @description
-	function sendMessage(string _text) returns (bool sucess) {
+	function sendMessage(bytes32 _text) returns (bool sucess) {
 		Message memory msg;
 		
 		msg.sender 	= msg.sender;
@@ -44,15 +44,40 @@ contract MessageHistory {
 	}
 	
 	// *********************************************
+	// * getSize
+	// @description
+	function getSize() returns (uint) {
+		return (messageHistory.length);
+	}
+	
+	// *********************************************
 	// * getLastMessage 
 	// @description
-	function getLastMessage() returns (address, string, uint) {
+	function getLastMessage() returns (bytes32) {
 		if(messageHistory.length == 0) {
 			throw;
 		}
-		uint256 i = messageHistory.length - 1;
+		uint i = messageHistory.length - 1;
 
-		return (messageHistory[i].sender, messageHistory[i].text, messageHistory[i].date);
+		return (messageHistory[i].text);
+	}
+	
+	// *********************************************
+	// * getLastMessage 
+	// @description
+	function getMessages() constant returns (bytes32[]) {
+		if(messageHistory.length == 0) {
+			throw;
+		} 
+		
+		uint length = messageHistory.length;
+		bytes32[] memory messages = new bytes32[](length);
+
+		for (var i = 0; i < messageHistory.length; i++) { 
+			messages[i] = messageHistory[i].text;
+		}
+		
+		return messages;
 	}
 
 	// *********************************************
