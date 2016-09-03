@@ -1,21 +1,53 @@
 module.exports = {
+	
   build: {
-    "index.html": "index.html",
-    "app.js": [
-      "javascripts/app.js"
+	  
+	/***************************
+	 * HTML
+	 ***************************/
+    "index.html"	: "index.html",
+    "chat.html"		: "views/chat.html",
+
+	/***************************
+	 * JAVASCRIPT
+	 ***************************/
+    "lib.js"		: [
+		"bower_components/angular/angular.min.js",
+		"bower_components/angular-resource/angular-resource.min.js",
+		"bower_components/angular-route/angular-route.min.js",
+		"bower_components/angular-messages/angular-messages.min.js",
+		"bower_components/jquery/dist/jquery.min.js",
+		"bower_components/bootstrap/dist/js/bootstrap.min.js",
+		"bower_components/web3/dist/web3.min.js"
     ],
-    "app.css": [
-      "stylesheets/app.css"
+    "app.js"		: [
+		"javascripts/app.js"
     ],
-    "images/": "images/"
+	
+	/***************************
+	 * CSS
+	 ***************************/
+    "lib.css"		: [
+		"bower_components/bootstrap/dist/css/bootstrap.min.css"
+    ],
+    "app.css"		: [
+		"stylesheets/app.css"
+    ],
+
+	/***************************
+	 * IMAGES
+	 ***************************/
+    "images/"		: "images/"
   },
-  rpc: {
-    host: "localhost",
-    port: 8545
+  
+  rpc	: {
+    host	: "localhost",
+    port	: 8545
   },
-  networks: {
-    "live": {
-      network_id: 1, // Ethereum public network
+  
+  networks	: {
+    "live"		: {
+      network_id	: 1, // Ethereum public network
       // optional config values
       // host - defaults to "localhost"
       // port - defaults to 8545
@@ -23,17 +55,17 @@ module.exports = {
       // gasPrice
       // from - default address to use for any transaction Truffle makes during migrations
     },
-    "morden": {
-      network_id: 2,        // Official Ethereum test network
-      host: "localhost",    // Random IP for example purposes (do not use)
-      port: 8546             
+    "morden"	: {
+      network_id	: 2,        // Official Ethereum test network
+      host			: "localhost",    // Random IP for example purposes (do not use)
+      port			: 8546             
     },
-    "staging": {
-      network_id: 1337 // custom private network
+    "staging"	: {
+      network_id	: 1337 // custom private network
       // use default rpc settings
     },
-    "dev": {
-      network_id: "default"
+    "dev"		: {
+      network_id	: "default"
     }
   }
 };

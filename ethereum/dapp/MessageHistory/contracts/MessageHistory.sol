@@ -11,8 +11,9 @@ contract MessageHistory {
 	
 	// *********************************************
 	// * Data 
-	address public owner;
-	Message[] public messageHistory;
+	address 	public owner;
+	address 	public lastAdd;
+	Message[] 	public messageHistory;
 	
 	// *********************************************
 	// * Modifier
@@ -32,52 +33,54 @@ contract MessageHistory {
 	// * sendMessage 
 	// @description
 	function sendMessage(bytes32 _text) returns (bool sucess) {
-		Message memory msg;
+		Message memory message;
 		
-		msg.sender 	= msg.sender;
-		msg.text 	= _text;
-		msg.date 	= now; 
+		message.sender 	= msg.sender;
+		message.text 	= _text;
+		message.date 	= now; 
 
-		messageHistory.push(msg);
+		lastAdd	= msg.sender;
+		
+		messageHistory.push(message);
 		
 		return true;
 	}
 	
 	// *********************************************
-	// * getSize
-	// @description
-	function getSize() returns (uint) {
-		return (messageHistory.length);
-	}
-	
-	// *********************************************
 	// * getLastMessage 
 	// @description
-	function getLastMessage() returns (bytes32) {
+	function getLastMessage() returns (bytes32, address, uint) {
 		if(messageHistory.length == 0) {
 			throw;
 		}
 		uint i = messageHistory.length - 1;
 
-		return (messageHistory[i].text);
+		return (messageHistory[i].text, messageHistory[i].sender, messageHistory[i].date);
 	}
 	
 	// *********************************************
-	// * getLastMessage 
+	// * getMessages 
 	// @description
-	function getMessages() constant returns (bytes32[]) {
+	function getMessages() constant returns (bytes32[], address[], uint[]) {
 		if(messageHistory.length == 0) {
 			throw;
 		} 
 		
 		uint length = messageHistory.length;
-		bytes32[] memory messages = new bytes32[](length);
+		
+		bytes32[] 	memory messagesText 	= new bytes32[](length);
+		uint[] 		memory messagesDate 	= new uint[](length);
+		address[] 	memory messagesAddress 	= new address[](length);
 
 		for (var i = 0; i < messageHistory.length; i++) { 
-			messages[i] = messageHistory[i].text;
+			Message memory message = messageHistory[i];
+		
+			messagesText[i] 	= message.text;
+			messagesAddress[i] 	= message.sender;
+			messagesDate[i] 	= message.date;
 		}
 		
-		return messages;
+		return (messagesText, messagesAddress, messagesDate);
 	}
 
 	// *********************************************
