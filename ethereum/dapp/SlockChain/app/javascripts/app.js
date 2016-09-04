@@ -4,7 +4,7 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 /**
  * CONSTANTS
  */
-.constant('RPC_URL'	, 'http://130.211.50.165:8546')
+.constant('RPC_URL'	, 'http://130.211.50.165:8545')
 .constant('DEBUG'	, true)
 
 /**
@@ -52,8 +52,15 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 		$log.debug("[DEBUG] FACTORY / init() : promise (RPC_URL="+RPC_URL+")");
 		
 		// Get WEB3
-		web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
+		if(typeof web3 !== 'undefined') {
+			web3 = new Web3(web3.currentProvider);  
+		} else {
+			web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
+		}
 
+			web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
+		console.log(web3);
+		
 		// Get Contract
 		$rootScope.contract = {
 			SlockChain: SlockChain.deployed()
