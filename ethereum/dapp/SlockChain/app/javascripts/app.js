@@ -32,6 +32,7 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 })
 .config(function(NotificationProvider) {
 	NotificationProvider.setOptions({
+		delay				: 10000,
 		startTop			: 20,
 		startRight			: 10,
 		verticalSpacing		: 20,
@@ -65,7 +66,7 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 		$rootScope.contract = {
 			//SlockChain: SlockChain.deployed() // doesn't work on morden
 			SlockChain: SlockChain.at(CONTRACT_ADDRESS)
-		}
+		};
 		$log.debug("[DEBUG] FACTORY / init(): contract address " + $rootScope.contract.SlockChain.address);
 
 		// Get accounts
@@ -302,7 +303,7 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 	$scope.sendMessage = function() {
 		$log.debug("[START] CONTROLLER / channelController.sendMessage (channelId="+$scope.channelId,+", account="+$rootScope.account+", message="+$scope.message+")");
 		
-		Notification.primary({message: "Sending message ...", positionY: 'bottom', positionX: 'right'});
+		Notification.primary({message: "Sending message ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
 		SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account, $scope.message).then(function(transaction) {
 			$scope.getMessages();
