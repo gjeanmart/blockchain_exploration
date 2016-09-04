@@ -19,8 +19,9 @@ module.exports = {
 		"bower_components/angular-messages/angular-messages.min.js",
 		"bower_components/angular-ui-notification/dist/angular-ui-notification.min.js",
 		"bower_components/jquery/dist/jquery.min.js",
-		"bower_components/bootstrap/dist/js/bootstrap.min.js",
-		"bower_components/web3/dist/web3.min.js"
+		"bower_components/bootstrap/dist/js/bootstrap.min.js"
+		//,
+		//"bower_components/web3/dist/web3.min.js"
     ],
     "app.js"		: [
 		"javascripts/app.js"
@@ -61,7 +62,7 @@ module.exports = {
     "morden"	: {
       network_id	: 2,        // Official Ethereum test network
       host			: "0.0.0.0",    // Random IP for example purposes (do not use)
-      port			: 8546             
+      port			: 8545             
     },
     "staging"	: {
       network_id	: 1337 // custom private network

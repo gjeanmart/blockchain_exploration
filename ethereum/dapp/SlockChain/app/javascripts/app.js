@@ -4,8 +4,9 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 /**
  * CONSTANTS
  */
-.constant('RPC_URL'	, 'http://130.211.50.165:8545')
-.constant('DEBUG'	, true)
+.constant('RPC_URL'				, 'http://130.211.50.165:8545')
+.constant('CONTRACT_ADDRESS'	, '0xB9e39dC647fAE5D6836ba9d24Dc497837E33AA35')
+.constant('DEBUG'				, true)
 
 /**
  * CONFIG
@@ -31,7 +32,6 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 })
 .config(function(NotificationProvider) {
 	NotificationProvider.setOptions({
-		delay				: 10000,
 		startTop			: 20,
 		startRight			: 10,
 		verticalSpacing		: 20,
@@ -44,7 +44,7 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 /**
  * FACTORY
  */
-.factory( 'init', function ($log, $q, RPC_URL, $rootScope, CommonEthService) {
+.factory( 'init', function ($log, $q, RPC_URL, CONTRACT_ADDRESS, $rootScope, CommonEthService) {
 	
 	$log.debug("[START] FACTORY / init()");
 		
@@ -58,12 +58,13 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 			web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
 		}
 
-			web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
+		web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL));
 		console.log(web3);
 		
 		// Get Contract
 		$rootScope.contract = {
-			SlockChain: SlockChain.deployed()
+			//SlockChain: SlockChain.deployed() // doesn't work on morden
+			SlockChain: SlockChain.at(CONTRACT_ADDRESS)
 		}
 		$log.debug("[DEBUG] FACTORY / init(): contract address " + $rootScope.contract.SlockChain.address);
 
@@ -241,16 +242,17 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 		SlockChainEthContractService.createChannel($scope.channelName, $rootScope.account).then(function(transaction) {
 			$scope.getChannels();
 			$scope.getBalance();
-			$scope.channelName = "";
 			
 			$log.debug("[END] CONTROLLER / channelListController.createChannel(account="+$rootScope.account+", channelName="+$scope.channelName+") : " + transaction);
+			
+			$scope.channelName = "";
 			
 		}, function(error) {
 			$log.error("[ERROR] CONTROLLER / channelListController.createChannel(account="+$rootScope.account+", channelName="+$scope.channelName+") : " + error);
 		});
 	};
 })
-.controller('channelController', function ($rootScope, $scope, $routeParams, $log, $filter, init, CommonEthService, SlockChainEthContractService) {
+.controller('channelController', function ($rootScope, $scope, $routeParams, $log, $filter, init, Notification, CommonEthService, SlockChainEthContractService) {
     var crtl = this;
         
     init.then(function(accounts) {
@@ -300,10 +302,15 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 	$scope.sendMessage = function() {
 		$log.debug("[START] CONTROLLER / channelController.sendMessage (channelId="+$scope.channelId,+", account="+$rootScope.account+", message="+$scope.message+")");
 		
+		Notification.primary({message: "Sending message ...", positionY: 'bottom', positionX: 'right'});
+		
 		SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account, $scope.message).then(function(transaction) {
 			$scope.getMessages();
 			$scope.getBalance();
 			$scope.message = "";
+			
+			
+			Notification.primary({message: "Message sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 			
 			$log.debug("[END] CONTROLLER / channelController.sendMessage(channelId="+$scope.channelId,+", account="+$rootScope.account+", message="+$scope.message+") : " + transaction);
 			
@@ -344,16 +351,16 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 				var messageLevel 	= result.args.level.c[0];
 				var messageDate 	=  new Date(result.args.date.c[0]*1000);
 
-				var messageFormatted = $filter('date')(messageDate, 'yyyy-MM-dd HH:ss') + " " + messageTitle + " " + messageText;
+				var messageFormatted = $filter('date')(messageDate, 'yyyy-MM-dd HH:ss') + " " + messageText;
 				
 				if(messageLevel == 0) {
-					Notification.error({message: messageFormatted, positionY: 'bottom', positionX: 'right'});
+					Notification.error({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 				} else if(messageLevel == 1) {
-					Notification.success({message: messageFormatted, positionY: 'bottom', positionX: 'right'});
+					Notification.success({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 				} else if(messageLevel == 2) {
-					Notification.warning({message: messageFormatted, positionY: 'bottom', positionX: 'right'});	
+					Notification.warning({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
 				} else if(messageLevel == 3) {
-					Notification.primary({message: messageFormatted, positionY: 'bottom', positionX: 'right'});	
+					Notification.primary({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
 				}
 			}
 
