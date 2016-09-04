@@ -1,4 +1,4 @@
 module.exports = function(deployer) {
 
-  deployer.deploy(MessageHistory);
+  deployer.deploy(SlockChain);
 };

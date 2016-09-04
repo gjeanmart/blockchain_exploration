@@ -1,0 +1,58 @@
+<div class="row">
+
+	<div class="col-md-3">
+		<p class="lead">Channels</p>
+        <div class="list-group">
+            <a href="#/channel/{{channel.id}}" class="list-group-item active" ng-repeat="channel in channels">{{channel.name}}</a>
+		</div>
+	</div>
+
+    <div class="col-md-9">
+		<div class="row">
+			<div class="form-group col-md-4">
+				<label class="control-label">Your address</label>
+				
+				<select class="form-control"
+						ng-model="$root.account"
+						ng-options="account for account in accounts"
+						ng-change="getBalance()"
+						id="account" 
+						name="account">
+				</select>
+			</div>
+			<div class="form-group col-md-4">
+				<label class="control-label">Your balance</label> 
+				<input	type="text" 
+						class="form-control" 
+						id="balance"
+						name="balance"
+						ng-model="balance" 
+						ng-readonly="true" />
+			</div>
+		</div>
+
+		<div class="well">
+			<div ng-repeat="message in messages">
+				<div class="row">
+					<div class="col-md-12">{{message.sender}}
+						<span class="pull-right">{{message.date | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+						<p>{{message.text}}</p>
+					</div>
+				</div>
+				<hr>
+			</div>
+		</div>
+
+		<div class="row" style="margin-top: 40px;">
+			<div class="form-group send-wrap  col-md-8">
+				<textarea class="form-control send-message" rows="3" placeholder="Write a reply..." ng-model="message"></textarea>
+			</div>
+			<div class="form-group  col-md-8" align="right">
+				<button rype="submit" class="btn btn-primary" ng-click="sendMessage()">Send Message</button>
+			</div>
+		</div>
+    </div>
+
+</div>
+
+

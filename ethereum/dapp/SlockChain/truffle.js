@@ -6,7 +6,8 @@ module.exports = {
 	 * HTML
 	 ***************************/
     "index.html"	: "index.html",
-    "chat.html"		: "views/chat.html",
+    "channels.html"		: "views/channels.html",
+    "channel.html"		: "views/channel.html",
 
 	/***************************
 	 * JAVASCRIPT
@@ -16,6 +17,7 @@ module.exports = {
 		"bower_components/angular-resource/angular-resource.min.js",
 		"bower_components/angular-route/angular-route.min.js",
 		"bower_components/angular-messages/angular-messages.min.js",
+		"bower_components/angular-ui-notification/dist/angular-ui-notification.min.js",
 		"bower_components/jquery/dist/jquery.min.js",
 		"bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"bower_components/web3/dist/web3.min.js"
@@ -28,7 +30,8 @@ module.exports = {
 	 * CSS
 	 ***************************/
     "lib.css"		: [
-		"bower_components/bootstrap/dist/css/bootstrap.min.css"
+		"bower_components/bootstrap/dist/css/bootstrap.min.css",
+		"bower_components/angular-ui-notification/dist/angular-ui-notification.min.css",
     ],
     "app.css"		: [
 		"stylesheets/app.css"
@@ -57,7 +60,7 @@ module.exports = {
     },
     "morden"	: {
       network_id	: 2,        // Official Ethereum test network
-      host			: "localhost",    // Random IP for example purposes (do not use)
+      host			: "0.0.0.0",    // Random IP for example purposes (do not use)
       port			: 8546             
     },
     "staging"	: {
