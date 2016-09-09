@@ -1,35 +1,55 @@
 
-var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notification'])
+var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notification', 'ui.bootstrap'])
 
 /**
  * CONSTANTS
  */
 .constant('RPC_URL'				, 'http://130.211.50.165:8545')
-.constant('CONTRACT_ADDRESS'	, '0xB9e39dC647fAE5D6836ba9d24Dc497837E33AA35')
+.constant('VERSION'				, '0.1.0')
 .constant('DEBUG'				, true)
+.constant('TIPS_ADDRESS'		, '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
+
+
 
 /**
  * CONFIG
  */
-.config(['$routeProvider',
-  function($routeProvider) {
-    $routeProvider.
-		when('/channel/', {
+.config(function($stateProvider, $urlRouterProvider) {
+	$urlRouterProvider.otherwise("/home");
+
+	$stateProvider
+		/*******************************************************
+		 * HOME
+		*******************************************************/
+		.state('home', {
+			url			: '/home',
 			templateUrl	: 'channels.html',
 			controller	: 'channelListController'
-		}).
-		when('/channel/:channelId', {
+		})
+	    
+		/*******************************************************
+		* CHANNEL
+		*******************************************************/
+		.state('channel', {
+			url			: '/channel/:channelId',
 			templateUrl	: 'channel.html',
 			controller	: 'channelController'
-		}).
-		otherwise({
-			redirectTo: '/channel'
-		});
-	}
-])
+		})
+	    
+		/*******************************************************
+		* ABOUT
+		*******************************************************/
+		.state('about', {
+			url			: '/about',
+			templateUrl	: 'about.html',
+			controller	: 'aboutController'
+		})
+})
+
 .config(function($logProvider, DEBUG){
   $logProvider.debugEnabled(DEBUG);
 })
+
 .config(function(NotificationProvider) {
 	NotificationProvider.setOptions({
 		delay				: 10000,
@@ -45,7 +65,7 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 /**
  * FACTORY
  */
-.factory( 'init', function ($log, $q, RPC_URL, CONTRACT_ADDRESS, $rootScope, CommonEthService) {
+.factory( 'init', function ($log, $q, RPC_URL, $rootScope, CommonEthService) {
 	
 	$log.debug("[START] FACTORY / init()");
 		
@@ -64,8 +84,8 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 		
 		// Get Contract
 		$rootScope.contract = {
-			//SlockChain: SlockChain.deployed() // doesn't work on morden
-			SlockChain: SlockChain.at(CONTRACT_ADDRESS)
+			SlockChain: SlockChain.deployed() // doesn't work on morden
+			//SlockChain: SlockChain.at(CONTRACT_ADDRESS)
 		};
 		$log.debug("[DEBUG] FACTORY / init(): contract address " + $rootScope.contract.SlockChain.address);
 
@@ -201,12 +221,31 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 		
 		return balance;
     };
+	
+	service.sendTransaction = function (account, receiver, amount) {
+		$log.debug("[START] SERVICE / CommonEthService.sendTransaction(account="+account+", receiver="+receiver+", amount="+amount+")");
+		
+		return $q(function(resolve, reject) 	{
+			
+			web3.eth.sendTransaction({from: account, to: receiver, value: web3.toWei(amount, "ether")}, function(err, tx) {
+				if (err != null) {
+					$log.error("[ERROR] CommonEthService.sendTransaction(account="+account+", receiver="+receiver+", amount="+amount+") : There was an error sending a transaction : " + err);
+					reject("There was an error fetching sending your transaction.");
+				}
+						
+				$log.debug("[END] SERVICE / CommonEthService.sendTransaction(account="+account+", receiver="+receiver+", amount="+amount+") : transaction="+tx);
+				
+				resolve(tx);
+			});
+			
+		});
+    };
 })
 
 /**
  * CONTROLLERS
  */
- .controller('channelListController', function ($rootScope, $scope, $routeParams, $log, $filter, init, CommonEthService, SlockChainEthContractService) {
+ .controller('channelListController', function ($rootScope, $scope, $stateParams, $log, $filter, Notification, init, CommonEthService, SlockChainEthContractService) {
     var crtl = this;
         
     init.then(function(accounts) {
@@ -240,26 +279,29 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 	$scope.createChannel = function() {
 		$log.debug("[START] CONTROLLER / channelListController.createChannel (account="+$rootScope.account+", channelName="+$scope.channelName+")");
 		
+		Notification.primary({message: "Creating channel ...", delay: null, positionY: 'bottom', positionX: 'right'});
+		
 		SlockChainEthContractService.createChannel($scope.channelName, $rootScope.account).then(function(transaction) {
 			$scope.getChannels();
-			$scope.getBalance();
+			$rootScope.getBalance();
+			$scope.channelName = "";
 			
 			$log.debug("[END] CONTROLLER / channelListController.createChannel(account="+$rootScope.account+", channelName="+$scope.channelName+") : " + transaction);
+			Notification.primary({message: "Channel created [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 			
-			$scope.channelName = "";
 			
 		}, function(error) {
 			$log.error("[ERROR] CONTROLLER / channelListController.createChannel(account="+$rootScope.account+", channelName="+$scope.channelName+") : " + error);
 		});
 	};
 })
-.controller('channelController', function ($rootScope, $scope, $routeParams, $log, $filter, init, Notification, CommonEthService, SlockChainEthContractService) {
+.controller('channelController', function ($rootScope, $scope, $stateParams, $log, $filter, init, Notification, CommonEthService, SlockChainEthContractService) {
     var crtl = this;
         
     init.then(function(accounts) {
 		$log.debug("[START] CONTROLLER / channelController.init ()");
 		
-		$scope.channelId = $routeParams.channelId;
+		$scope.channelId = $stateParams.channelId;
 		$rootScope.account = accounts[0];
 		
 		$rootScope.getBalance();
@@ -307,9 +349,8 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 		
 		SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account, $scope.message).then(function(transaction) {
 			$scope.getMessages();
-			$scope.getBalance();
+			$rootScope.getBalance();
 			$scope.message = "";
-			
 			
 			Notification.primary({message: "Message sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 			
@@ -319,6 +360,37 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 			$log.error("[ERROR] CONTROLLER / channelController.sendMessage(channelId="+$scope.channelId,+", account="+$rootScope.account+", message="+$scope.message+") : " + error);
 		});
 	};
+})
+.controller('aboutController', function ($rootScope, $scope, $log, Notification, init, CommonEthService, VERSION, TIPS_ADDRESS) {
+    var crtl = this;
+        
+    init.then(function(accounts) {
+		$log.debug("[START] CONTROLLER / aboutController.init ()");
+		
+		$scope.version = VERSION;
+		$scope.tipsAddress = TIPS_ADDRESS;
+		$rootScope.account = accounts[0];
+		$rootScope.getBalance();
+			
+		$log.debug("[END] CONTROLLER / aboutController.init() : account="+$rootScope.account+", channelId=" + $scope.channelId);
+    });
+	
+	$scope.sendTips = function() {
+		$log.debug("[START] CONTROLLER / aboutController.sendTips (amount=" + $scope.amount + ")");
+		
+		Notification.primary({message: "Sending tips ...", delay: null, positionY: 'bottom', positionX: 'right'});
+		
+		CommonEthService.sendTransaction($rootScope.account, TIPS_ADDRESS, $scope.amount).then(function(transaction) {		
+			$rootScope.getBalance();
+			
+			Notification.primary({message: "Transaction sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			
+			$log.debug("[END] CONTROLLER / aboutController.sendTips (amount=" + $scope.amount + ") : transaction="+transaction);
+		
+		}, function(error) {
+			$log.error("[ERROR] CONTROLLER / aboutController.sendTips (amount=" + $scope.amount + "): " + error);
+		});
+	}
 })
 
 /**
@@ -337,32 +409,36 @@ var app = angular.module('SlockChain', [ 'ngRoute',  'ngResource', 'ui-notificat
 	$rootScope.watchLogEvent = function() {
 		$log.debug("[START] CONTROLLER / channelController.watchLogEvent()");
 		
-		var logEvent = $rootScope.contract.SlockChain.Log();
-		
-		logEvent.watch(function(error, result){
+		$rootScope.contract.SlockChain.Log(function(error, result){
 			$log.debug("[DEBUG] CONTROLLER / channelController.watchLogEvent() : error="+error);
 			$log.debug("[DEBUG] CONTROLLER / channelController.watchLogEvent() : result="+result);
 
-			console.log(error);
-			console.log(result);
-			
 			if(result != undefined && result.args != undefined) {
 				var messageTitle 	= web3.toAscii(result.args.title)
 				var messageText 	= web3.toAscii(result.args.text)
 				var messageLevel 	= result.args.level.c[0];
-				var messageDate 	=  new Date(result.args.date.c[0]*1000);
+				var messageDate 	= new Date(result.args.date.c[0]*1000);
+				var messageAddress 	= result.args.sender;
 
-				var messageFormatted = $filter('date')(messageDate, 'yyyy-MM-dd HH:ss') + " " + messageText;
 				
-				if(messageLevel == 0) {
-					Notification.error({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-				} else if(messageLevel == 1) {
-					Notification.success({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-				} else if(messageLevel == 2) {
-					Notification.warning({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
-				} else if(messageLevel == 3) {
-					Notification.primary({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
+				console.log(messageAddress);
+				console.log($rootScope.account);
+				
+				if(messageAddress != $rootScope.account) {
+					var messageFormatted = $filter('date')(messageDate, 'yyyy-MM-dd HH:ss') + " " + messageText;
+					
+					if(messageLevel == 0) {
+						Notification.error({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+					} else if(messageLevel == 1) {
+						Notification.success({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+					} else if(messageLevel == 2) {
+						Notification.warning({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
+					} else if(messageLevel == 3) {
+						Notification.primary({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
+					}
 				}
+				
+
 			}
 
 		});

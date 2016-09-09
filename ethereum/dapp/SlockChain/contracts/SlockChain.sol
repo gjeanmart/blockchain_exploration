@@ -21,17 +21,18 @@ contract SlockChain {
 	// *********************************************
 	// * Events 
 	// level : 0 ERROR, 1 INFO, 2 WARNING, 3 DEBUG, 4 TRACE
-	event Log(uint level, 
-			  bytes32 title,
-			  bytes32 text, 
-			  uint date
+	event Log(uint 		level, 
+			  bytes32 	title,
+			  bytes32 	text, 
+			  uint 		date,
+			  address 	sender
 	);
 	
 	// *********************************************
 	// * Modifier
     	modifier onlyOwner {
         	if (msg.sender != owner) {
-				Log(0, "Error", "Restricted function", now);
+				Log(0, "Error", "Restricted function", now, msg.sender);
 				throw;
         	}
 			_
@@ -50,7 +51,7 @@ contract SlockChain {
 	// @description
 	function sendMessage(uint channelID, bytes32 _text) returns (bool sucess) {
 		if(channelID >= nbChannel) {
-			Log(0, "Error", "Channel does not exist", now);
+			Log(0, "Error", "Channel does not exist", now, msg.sender);
 			throw;
 		}
 	
@@ -62,7 +63,7 @@ contract SlockChain {
 		
 		channels[channelID].push(message);
 		
-		Log(1, "New message", _text, now);
+		Log(1, "New message", _text, now, msg.sender);
 		
 		return true;
 	}
@@ -72,7 +73,7 @@ contract SlockChain {
 	// @description
 	function getLastMessage(uint channelID) returns (bytes32, address, uint) {
 		if(channelID >= nbChannel) {
-			Log(0, "Error", "Channel does not exist", now);
+			Log(0, "Error", "Channel does not exist", now, msg.sender);
 			throw;
 		}
 		
@@ -88,7 +89,7 @@ contract SlockChain {
 	// @TODO: pagination
 	function getMessages(uint channelID) constant returns (bytes32[], address[], uint[]) {
 		if(channelID >= nbChannel) {
-			Log(0, "Error", "Channel does not exist", now);
+			Log(0, "Error", "Channel does not exist", now, msg.sender);
 			throw;
 		}
 	
@@ -132,7 +133,7 @@ contract SlockChain {
 		
 		nbChannel += 1;
 		
-		Log(1, "New channel", name, now);
+		Log(1, "New channel", name, now, msg.sender);
 		
 		return nbChannel;
 	}

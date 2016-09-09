@@ -4,13 +4,14 @@
 <!--[if IE 8]>         <html lang="en" ng-app="SlockChain" class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html lang="en" ng-app="SlockChain" class="no-js"> <!--<![endif]-->
 <head>
-  <title>SlockChain - A Decentralized Blockchain App</title>
+	<meta charset="UTF-8">
+	<title>SlockChain - A Decentralized Blockchain App</title>
   
-  <link href="./lib.css" rel='stylesheet' type='text/css'>
-  <link href="./app.css" rel='stylesheet' type='text/css'>
+	<link href="./lib.css" rel='stylesheet' type='text/css'>
+	<link href="./app.css" rel='stylesheet' type='text/css'>
   
-  <script src="./lib.js"></script>
-  <script src="./app.js"></script>
+	<script src="./lib.js"></script>
+	<script src="./app.js"></script>
 </head>
 <body>
 
@@ -31,10 +32,10 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="#/channel">Channels</a>
+                        <a ui-sref="home">Channels</a>
                     </li>
                     <li>
-                        <a href="#/about">About</a>
+                        <a ui-sref="about">About</a>
                     </li>
                 </ul>
             </div>
@@ -45,11 +46,7 @@
 
     <!-- Page Content -->
     <div class="container">
-
-		<div ng-view></div>
-	
-
-
+		<div ui-view></div>
     </div>
     <!-- /.container -->
 

@@ -5,9 +5,10 @@ module.exports = {
 	/***************************
 	 * HTML
 	 ***************************/
-    "index.html"	: "index.html",
+    "index.html"		: "index.html",
     "channels.html"		: "views/channels.html",
     "channel.html"		: "views/channel.html",
+    "about.html"		: "views/about.html",
 
 	/***************************
 	 * JAVASCRIPT
@@ -18,6 +19,9 @@ module.exports = {
 		"bower_components/angular-route/angular-route.min.js",
 		"bower_components/angular-messages/angular-messages.min.js",
 		"bower_components/angular-ui-notification/dist/angular-ui-notification.min.js",
+		"bower_components/angular-ui-router/release/angular-ui-router.min.js",
+		"bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
+		"bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
 		"bower_components/jquery/dist/jquery.min.js",
 		"bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"bower_components/web3/dist/web3.min.js"
@@ -31,6 +35,7 @@ module.exports = {
 	 ***************************/
     "lib.css"		: [
 		"bower_components/bootstrap/dist/css/bootstrap.min.css",
+		"bower_components/angular-bootstrap/ui-bootstrap-csp.css",
 		"bower_components/angular-ui-notification/dist/angular-ui-notification.min.css",
     ],
     "app.css"		: [
@@ -46,9 +51,9 @@ module.exports = {
   rpc	: {
     host	: "localhost",
     port	: 8545
-  },
-  
-  networks	: {
+  }
+/*
+,  networks	: {
     "live"		: {
       network_id	: 1, // Ethereum public network
       // optional config values
@@ -61,7 +66,7 @@ module.exports = {
     "morden"	: {
       network_id	: 2,        // Official Ethereum test network
       host			: "0.0.0.0",    // Random IP for example purposes (do not use)
-      port			: 8546             
+      port			: 8545             
     },
     "staging"	: {
       network_id	: 1337 // custom private network
@@ -71,4 +76,5 @@ module.exports = {
       network_id	: "default"
     }
   }
+*/
 };

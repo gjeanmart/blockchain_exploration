@@ -2,9 +2,11 @@
 
 	<div class="col-md-3">
 		<p class="lead">Channels</p>
-        <div class="list-group">
-            <a href="#/channel/{{channel.id}}" class="list-group-item active" ng-repeat="channel in channels">{{channel.name}}</a>
-		</div>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="channel in channels" ui-sref-active="list-group-item-info">
+				<a ui-sref="channel({channelId: channel.id})">{{channel.name}}</a>
+			</li>
+		</ul>
 	</div>
 
     <div class="col-md-9">
@@ -49,12 +51,14 @@
 		</div>
 
 		<div class="row" style="margin-top: 40px;">
-			<div class="form-group send-wrap  col-md-8">
-				<textarea class="form-control send-message" rows="3" placeholder="Write a reply..." ng-model="message"></textarea>
-			</div>
-			<div class="form-group  col-md-8" align="right">
-				<button rype="submit" class="btn btn-primary" ng-click="sendMessage()">Send Message</button>
-			</div>
+			<form name="form" role="form" class="form" novalidate>
+				<div class="form-group send-wrap  col-md-8">
+					<textarea class="form-control send-message" rows="3" placeholder="Write a reply..." ng-model="message"></textarea>
+				</div>
+				<div class="form-group  col-md-8" align="right">
+					<button rype="submit" class="btn btn-primary" ng-click="sendMessage()">Send Message</button>
+				</div>
+			</form>
 		</div>
     </div>
 
