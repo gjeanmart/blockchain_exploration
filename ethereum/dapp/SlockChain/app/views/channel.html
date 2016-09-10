@@ -13,16 +13,19 @@
 		<p class="lead">{{channelName}}</p>
 		<div class="well">
 			<div class="row" ng-show="messages.length == 0">
-				<div class="col-md-12">{{message.sender}}
+				<div class="col-md-12">
 					<p>No message ...</p>
 				</div>
 			</div>
 			<div ng-repeat="message in messages">
 				<div class="row">
-					<div class="col-md-12">{{message.sender}}
+					<div class="col-md-12"><a uib-tooltip-template="'sender.html'">{{message.username}} </a>
 						<span class="pull-right">{{message.date | date:'yyyy-MM-dd HH:mm:ss'}}</span>
 						<p>{{message.text}}</p>
 					</div>
+					<script type="text/ng-template" id="sender.html">
+					  <span>{{message.sender}}</span>
+					</script>
 				</div>
 				<hr>
 			</div>

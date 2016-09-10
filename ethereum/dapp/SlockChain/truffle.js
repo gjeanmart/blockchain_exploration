@@ -11,6 +11,7 @@ module.exports = {
     "about.html"		: "views/about.html",
     "signup.html"		: "views/signup.html",
     "account.html"		: "views/account.html",
+    "error.html"		: "views/error.html",
 
 	/***************************
 	 * JAVASCRIPT

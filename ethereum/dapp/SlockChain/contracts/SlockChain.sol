@@ -6,6 +6,7 @@ contract SlockChain {
 	// * Struct 
     	struct Message {
         	address 	sender;
+			bytes32		username;
         	bytes32  	text;
         	uint    	date;
     	}
@@ -56,7 +57,7 @@ contract SlockChain {
 	// *********************************************
 	// * sendMessage 
 	// @description
-	function sendMessage(uint _channelID, bytes32 _text) returns (bool sucess) {
+	function sendMessage(uint _channelID, bytes32 _text, bytes32 _username) returns (bool sucess) {
 		if(_channelID >= nbChannel) {
 			Log(0, "Error", "Channel does not exist", now, msg.sender);
 			throw;
@@ -64,9 +65,10 @@ contract SlockChain {
 	
 		Message memory message;
 		
-		message.sender 	= msg.sender;
-		message.text 	= _text;
-		message.date 	= now; 
+		message.sender 			= msg.sender;
+		message.text 			= _text;
+		message.date 			= now; 
+		message.username 		= _username;
 		
 		channels[_channelID].push(message);
 		
@@ -78,7 +80,7 @@ contract SlockChain {
 	// *********************************************
 	// * getLastMessage 
 	// @description
-	function getLastMessage(uint _channelID) returns (bytes32, address, uint) {
+	function getLastMessage(uint _channelID) returns (bytes32, bytes32, address, uint) {
 		if(_channelID >= nbChannel) {
 			Log(0, "Error", "Channel does not exist", now, msg.sender);
 			throw;
@@ -86,7 +88,7 @@ contract SlockChain {
 		
 		uint length = channels[_channelID].length;
 		
-		return (channels[_channelID][length-1].text, channels[_channelID][length-1].sender, channels[_channelID][length-1].date);
+		return (channels[_channelID][length-1].text, channels[_channelID][length-1].username, channels[_channelID][length-1].sender, channels[_channelID][length-1].date);
 	}
 	
 	
@@ -94,7 +96,7 @@ contract SlockChain {
 	// * getMessages 
 	// @description
 	// @TODO: pagination
-	function getMessages(uint _channelID) constant returns (bytes32[], address[], uint[]) {
+	function getMessages(uint _channelID) constant returns (bytes32[], bytes32[], address[], uint[]) {
 		if(_channelID >= nbChannel) {
 			Log(0, "Error", "Channel does not exist", now, msg.sender);
 			throw;
@@ -105,6 +107,7 @@ contract SlockChain {
 		bytes32[] 	memory messagesText 	= new bytes32[](length);
 		uint[] 		memory messagesDate 	= new uint[](length);
 		address[] 	memory messagesAddress 	= new address[](length);
+		bytes32[] 	memory messagesUsername	= new bytes32[](length);
 
 		for (var i = 0; i < length; i++) { 
 			Message memory message = channels[_channelID][i];
@@ -112,9 +115,10 @@ contract SlockChain {
 			messagesText[i] 	= message.text;
 			messagesAddress[i] 	= message.sender;
 			messagesDate[i] 	= message.date;
+			messagesUsername[i] = message.username;
 		}
 		
-		return (messagesText, messagesAddress, messagesDate);
+		return (messagesText, messagesUsername, messagesAddress, messagesDate);
 	}
 	
 	// *********************************************
@@ -165,17 +169,35 @@ contract SlockChain {
 	// *********************************************
 	// * getAccount
 	// @description
-	function getAccount() constant returns (bool, bytes32, bytes32) {
+	function getAccount(address _add) constant returns (bool, bytes32, bytes32) {
 		//if (accounts[msg.sender].active == false) {
 		//	return (false, 0, 0);
 		//}
 	
-		bool active 		= accounts[msg.sender].active;
-		bytes32 username 	= accounts[msg.sender].username;
-		bytes32 email 		= accounts[msg.sender].email;
+		bool active 		= accounts[_add].active;
+		bytes32 username 	= accounts[_add].username;
+		bytes32 email 		= accounts[_add].email;
 		
 		return (active, username, email);
 	}
+	
+	// *********************************************
+	// * updateAccount
+	// @description
+	function updateAccount(bytes32 _email, bytes32 _username) returns (bool) {
+		Account memory account;
+		
+		account.username 	= _username;
+		account.email 		= _email;
+		account.active 		= true;
+		
+		accounts[msg.sender] = account;
+		
+		Log(1, "New account", _email, now, msg.sender);
+		
+		return true;
+	}
+	
 	
 	// *********************************************
 	// * deleteAccount

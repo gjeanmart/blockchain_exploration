@@ -62,6 +62,30 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 			templateUrl	: 'about.html',
 			controller	: 'aboutController'
 		})
+	    
+		/*******************************************************
+		* ERROR
+		*******************************************************/
+		.state('error', {
+			url			: '/error',
+			templateUrl	: 'error.html',
+			controller	: 'errorController',
+			params		: {
+				error 		: {
+					code		: 0,
+					message		: 'no error'
+				}
+			}
+		})
+	    
+		/*******************************************************
+		* SIGN UP
+		*******************************************************/
+		.state('signup', {
+			url			: '/signup',
+			templateUrl	: 'signup.html',
+			controller	: 'signupController'
+		})
 })
 
 .config(function($logProvider, DEBUG){
@@ -83,7 +107,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 /**
  * FACTORY
  */
-.factory( 'init', function ($log, $q, RPC_URL, $rootScope, CommonEthService) {
+.factory( 'init', function ($log, $q, $state, RPC_URL, $rootScope, CommonEthService) {
 	
 	$log.debug("[START] FACTORY / init()");
 		
@@ -107,6 +131,16 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$rootScope.network = CommonEthService.getNetwork().then(function(network){
 			$log.debug("[DEBUG] FACTORY / init(): network " + network);
 			$rootScope.network = network;
+			
+		}, function(error) {
+			$log.error("[DEBUG] FACTORY / init(): error " + error);
+			$state.go('error', {
+				error : {
+					code		: 1,
+					message		: error
+				}
+			});
+			reject(error);
 		});
 		
 		// Get addresses
@@ -114,9 +148,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 			$rootScope.addresses = addresses;
 			$log.debug("[END] FACTORY / init() : " + addresses);
 			
-			if(!$rootScope.account) {
-				$rootScope.setAccount(addresses[0]);
-			}
+			$rootScope.setAccount(addresses[0]);
 			
 			resolve(addresses)
 			
@@ -148,12 +180,40 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		});
     };
 	
-	service.getAccount = function (address) {
-		$log.debug("[START] SERVICE / SlockChainEthContractService.getAccount(address="+address+")");
+	service.updateAccount = function (address, username, email) {
+		$log.debug("[START] SERVICE / SlockChainEthContractService.updateAccount(address="+address+", username="+username+", email="+email+")");
 		
 		return $q(function(resolve, reject) 	{
-			$rootScope.contract.SlockChain.getAccount.call({from: address}).then(function(result) {
-				$log.debug("[END] SERVICE / SlockChainEthContractService.getAccount(address="+address+")");
+			$rootScope.contract.SlockChain.updateAccount(email, username, {from: address}).then(function(transaction) {
+				$log.debug("[END] SERVICE / SlockChainEthContractService.updateAccount(address="+address+", username="+username+", email="+email+") : transaction=" + transaction);
+				resolve(transaction);
+			}, function(error) {
+				$log.debug("[ERROR] SERVICE / SlockChainEthContractService.updateAccount(address="+address+", username="+username+", email="+email+") : error=" + error);
+				reject(error);
+			});
+		});
+    };
+    
+	service.deleteAccount = function (address) {
+		$log.debug("[START] SERVICE / SlockChainEthContractService.deleteAccount(address="+address+")");
+		
+		return $q(function(resolve, reject) 	{
+			$rootScope.contract.SlockChain.deleteAccount({from: address}).then(function(transaction) {
+				$log.debug("[END] SERVICE / SlockChainEthContractService.deleteAccount(address="+address+") : transaction=" + transaction);
+				resolve(transaction);
+			}, function(error) {
+				$log.debug("[ERROR] SERVICE / SlockChainEthContractService.deleteAccount(address="+address+") : error=" + error);
+				reject(error);
+			});
+		});
+    };
+	
+	service.getAccount = function (address, sender) {
+		$log.debug("[START] SERVICE / SlockChainEthContractService.getAccount(address="+address+", sender="+sender+")");
+		
+		return $q(function(resolve, reject) 	{
+			$rootScope.contract.SlockChain.getAccount.call(address, {from: sender}).then(function(result) {
+				$log.debug("[END] SERVICE / SlockChainEthContractService.getAccount(address="+address+", sender="+sender+")");
 				
 				var userExist = result[0];
 				if(!userExist) {
@@ -171,7 +231,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 					});
 				}
 			}, function(error) {
-				$log.debug("[ERROR] SERVICE / SlockChainEthContractService.getAccount(address="+address+") : error=" + error);
+				$log.debug("[ERROR] SERVICE / SlockChainEthContractService.getAccount(address="+address+", sender="+sender+") : error=" + error);
 				reject(error);
 			});
 		});
@@ -218,15 +278,15 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		});
 	};
 	
-	service.sendMessage = function (channelId, address, message) {
-		$log.debug("[START] SERVICE / SlockChainEthContractService.sendMessage(channelId="+channelId+", address="+address+", message="+message+")");
+	service.sendMessage = function (channelId, address, username, message) {
+		$log.debug("[START] SERVICE / SlockChainEthContractService.sendMessage(channelId="+channelId+", address="+address+", username="+username+", message="+message+")");
 		
 		return $q(function(resolve, reject) 	{
-			$rootScope.contract.SlockChain.sendMessage(channelId, message, {from: address}).then(function(transaction) {
-				$log.debug("[END] SERVICE / SlockChainEthContractService.sendMessage(channelId="+channelId+", address="+address+", message="+message+") : transaction=" + transaction);
+			$rootScope.contract.SlockChain.sendMessage(channelId, message, username, {from: address}).then(function(transaction) {
+				$log.debug("[END] SERVICE / SlockChainEthContractService.sendMessage(channelId="+channelId+", address="+address+", username="+username+", message="+message+") : transaction=" + transaction);
 				resolve(transaction);
 			}, function(error) {
-				$log.debug("[ERROR] SERVICE / SlockChainEthContractService.sendMessage(channelId="+channelId+", address="+address+", message="+message+") : error=" + error);
+				$log.debug("[ERROR] SERVICE / SlockChainEthContractService.sendMessage(channelId="+channelId+", address="+address+", username="+username+", message="+message+") : error=" + error);
 				reject(error);
 			});
 		});
@@ -242,9 +302,10 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 				
 				for(var i = 0; i < result[0].length; i++) {
 					var msg = {
-						date		: new Date(result[2][i].c[0]*1000),
-						sender		: result[1][i],
-						text		: web3.toAscii(result[0][i])
+						date		: new Date(result[3][i].c[0]*1000),
+						sender		: result[2][i],
+						text		: web3.toAscii(result[0][i]),
+						username	: web3.toAscii(result[1][i])
 					};
 					
 					messages.push(msg);
@@ -468,7 +529,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$log.debug("[START] CONTROLLER / channelController.sendMessage ()");
 		Notification.primary({message: "Sending message ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
-		SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account.address, $scope.message).then(function(transaction) {
+		SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account.address, $rootScope.account.username, $scope.message).then(function(transaction) {
 			$scope.getMessages();
 			$rootScope.getBalance();
 			$scope.message = "";
@@ -478,10 +539,13 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 			
 		}, function(error) {
 			$log.error("[ERROR] CONTROLLER / channelController.sendMessage() : " + error);
-			console.log(error);
 			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 		});
 	};
+	
+	 $rootScope.$on("onNewMessage", function(){			
+		$scope.getMessages();
+	});
 })
 .controller('aboutController', function ($rootScope, $scope, $log, Notification, init, CommonEthService, TIPS_ADDRESS) {
     var crtl = this;
@@ -510,7 +574,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		});
 	}
 })
-.controller('accountController', function ($rootScope, $scope, $log, Notification, init, CommonEthService, SlockChainEthContractService) {
+.controller('accountController', function ($rootScope, $scope, $log, $state, Notification, init, CommonEthService, SlockChainEthContractService) {
     var crtl = this;
      
     init.then(function(accounts, network) {
@@ -521,50 +585,82 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
     });
 	
 	$scope.updateAccount = function() {
-		$log.debug("[START] CONTROLLER / accountController.updateAccount.init()");
-
-	
-		$log.debug("[END] CONTROLLER / accountController.updateAccount.init()");
+		$log.debug("[START] CONTROLLER / accountController.updateAccount()");
+		Notification.primary({message: "Updating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
+		SlockChainEthContractService.updateAccount($rootScope.account.address, $rootScope.account.username, $rootScope.account.email).then(function(transaction) {		
+			$log.debug("[END] CONTROLLER / signupController.updateAccount() : transaction="+transaction);
+			Notification.primary({message: "Account updated [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			
+			$state.go('account');
+		
+		}, function(error) {
+			$log.error("[ERROR] CONTROLLER / signupController.updateAccount(): " + error);
+			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+		});			
 	};
 	
 	$scope.deleteAccount = function() {
-		$log.debug("[START] CONTROLLER / accountController.deleteAccount.init()");
-
-	
-		$log.debug("[END] CONTROLLER / accountController.deleteAccount.init()");
+		$log.debug("[START] CONTROLLER / accountController.deleteAccount()");
+		Notification.primary({message: "Deleting account ...", delay: null, positionY: 'bottom', positionX: 'right'});
+		
+		SlockChainEthContractService.deleteAccount($rootScope.account.address).then(function(transaction) {	
+			$log.debug("[END] CONTROLLER / accountController.deleteAccount()");
+			Notification.primary({message: "Account deleted [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			
+			$state.go('home');
+		
+		}, function(error) {
+			$log.error("[ERROR] CONTROLLER / signupController.createAccount(): " + error);
+			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+		});	
 		
 	};
 	
 })
-.controller('signupController', function ($rootScope, $scope, $log, $uibModalInstance, Notification, init, CommonEthService, SlockChainEthContractService) {
+.controller('signupController', function ($rootScope, $scope, $log, $state, init, Notification, CommonEthService, SlockChainEthContractService) {
     var crtl = this;
      
-    $scope.register = function () {
-		$log.debug("[START] CONTROLLER / signupController.register() ");
+    init.then(function(accounts, network) {
+		$log.debug("[START] CONTROLLER / signupController.init()");
+
+		
+		$log.debug("[END] CONTROLLER / signupController.init()");
+    });
+	 
+    $scope.createAccount = function () {
+		$log.debug("[START] CONTROLLER / signupController.createAccount() ");
 		Notification.primary({message: "Creating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
 		SlockChainEthContractService.createAccount($rootScope.account.address, $scope.username, $scope.email).then(function(transaction) {		
-			$log.debug("[END] CONTROLLER / signupController.register() : transaction="+transaction);
+			$log.debug("[END] CONTROLLER / signupController.createAccount() : transaction="+transaction);
 			Notification.primary({message: "Account created [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 			
-			$rootScope.signupModal.close({
-				'address'	: $rootScope.account.address ,
-				'username'	: $scope.username,
-				'email'		: $scope.email
-			});	
+			$state.go('home');
 		
 		}, function(error) {
-			$log.error("[ERROR] CONTROLLER / signupController.register(): " + error);
+			$log.error("[ERROR] CONTROLLER / signupController.createAccount(): " + error);
 			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 		});							
     };
+})
+.controller('errorController', function ($rootScope, $scope, $log, $state, $stateParams, init, Notification, CommonEthService, SlockChainEthContractService) {
+    var crtl = this;
+     
+    init.then(function(accounts, network) {
+		$log.debug("[START] CONTROLLER / errorController.init()");
+
+		
+		$log.debug("[END] CONTROLLER / errorController.init()");
+    });
+	 
+	 $scope.error = $stateParams.error;
 })
 
 /**
  * RUN
  */
-.run(function($rootScope, $log, $filter, $uibModal, Notification, CommonEthService, SlockChainEthContractService, VERSION) {
+.run(function($rootScope, $log, $filter, $state, Notification, CommonEthService, SlockChainEthContractService, VERSION) {
 	
 	$rootScope.setAccount = function(address) {
 		$log.debug("[START] RUN / root.setAccount(address="+address+")");
@@ -573,24 +669,10 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$rootScope.account.address = address;
 		$rootScope.getBalance();
 		
-		SlockChainEthContractService.getAccount(address).then(function(result) {
-
+		SlockChainEthContractService.getAccount(address, address).then(function(result) {
 			if(!result.userExist) {
-				/*
-				$rootScope.signupModal = $uibModal.open({
-						templateUrl	: 'signup.html',
-						controller	: 'signupController',
-						size		: 'lg',
-						backdrop  	: 'static',
-						keyboard  	: false
-				}).result.then(function (result) {
-					$rootScope.account.address = result.address;
-					$rootScope.account.username = result.username;
-					$rootScope.account.email 	= result.email;
-					
-					console.log($rootScope.account);
-				});
-				*/
+				$state.go('signup');
+				
 			} else {
 				$rootScope.account.username = result.username;
 				$rootScope.account.email 	= result.email;
@@ -608,7 +690,6 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$log.debug("[START] RUN / root.getBalance()");
 		
 		CommonEthService.getBalance($rootScope.account.address).then(function(balance) {
-			console.log(balance);
 			$rootScope.account.balance = balance;
 			$log.debug("[END] RUN / root.getBalance() : balance=" + balance);
 		});
@@ -640,6 +721,8 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 					} else if(messageLevel == 3) {
 						Notification.primary({message: messageFormatted, title: messageTitle, replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});	
 					}
+					
+					$rootScope.$emit("onNewMessage", {});
 				}
 				
 
@@ -647,6 +730,12 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 
 		});
 	};
+	
+	$rootScope.$on('$stateChangeStart',  function(event, toState, toParams, fromState, fromParams){ 
+		if($rootScope.account) {
+			$rootScope.setAccount($rootScope.account.address);
+		}
+	});
 	
 			
 	$rootScope.version = VERSION;
