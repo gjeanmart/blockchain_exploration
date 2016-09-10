@@ -10,29 +10,7 @@
 	</div>
 
     <div class="col-md-9">
-		<div class="row">
-			<div class="form-group col-md-4">
-				<label class="control-label">Your address</label>
-				
-				<select class="form-control"
-						ng-model="$root.account"
-						ng-options="account for account in accounts"
-						ng-change="getBalance()"
-						id="account" 
-						name="account">
-				</select>
-			</div>
-			<div class="form-group col-md-4">
-				<label class="control-label">Your balance</label> 
-				<input	type="text" 
-						class="form-control" 
-						id="balance"
-						name="balance"
-						ng-model="balance" 
-						ng-readonly="true" />
-			</div>
-		</div>
-
+		<p class="lead">{{channelName}}</p>
 		<div class="well">
 			<div class="row" ng-show="messages.length == 0">
 				<div class="col-md-12">{{message.sender}}
@@ -52,10 +30,10 @@
 
 		<div class="row" style="margin-top: 40px;">
 			<form name="form" role="form" class="form" novalidate>
-				<div class="form-group send-wrap  col-md-8">
+				<div class="form-group send-wrap  col-md-12">
 					<textarea class="form-control send-message" rows="3" placeholder="Write a reply..." ng-model="message"></textarea>
 				</div>
-				<div class="form-group  col-md-8" align="right">
+				<div class="form-group  col-md-12" align="right">
 					<button rype="submit" class="btn btn-primary" ng-click="sendMessage()">Send Message</button>
 				</div>
 			</form>

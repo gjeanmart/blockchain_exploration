@@ -3,28 +3,6 @@
 	</div>
 
     <div class="col-md-9">
-		<div class="row">
-			<div class="form-group col-md-4">
-				<label class="control-label">Your address</label>
-				
-				<select class="form-control"
-						ng-model="$root.account"
-						ng-options="account for account in accounts"
-						ng-change="getBalance()"
-						id="account" 
-						name="account">
-				</select>
-			</div>
-			<div class="form-group col-md-4">
-				<label class="control-label">Your balance</label> 
-				<input	type="text" 
-						class="form-control" 
-						id="balance"
-						name="balance"
-						ng-model="balance" 
-						ng-readonly="true" />
-			</div>
-		</div>
 
 		<div class="row">
 			<h1>Existing Channels</h1>
