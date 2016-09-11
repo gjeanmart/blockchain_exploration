@@ -1,12 +1,12 @@
 
-var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notification', 'ui.bootstrap'])
+var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notification', 'ui.bootstrap', 'ui.bootstrap.showErrors'])
 
 /**
  * CONSTANTS
  */
 .constant('RPC_URL'				, 'http://130.211.50.165:8545')
-.constant('VERSION'				, '0.1.1')
-.constant('DEBUG'				, true)
+.constant('VERSION'				, '0.1.2')
+.constant('DEBUG'				, false)
 .constant('TIPS_ADDRESS'		, '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
 .constant('NETWORKS'			, [{
 										id: 1,
@@ -91,6 +91,10 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 .config(function($logProvider, DEBUG){
   $logProvider.debugEnabled(DEBUG);
 })
+
+.config(['showErrorsConfigProvider', function(showErrorsConfigProvider) {
+	showErrorsConfigProvider.showSuccess(true);
+}])
 
 .config(function(NotificationProvider) {
 	NotificationProvider.setOptions({
@@ -255,7 +259,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$log.debug("[START] SERVICE / SlockChainEthContractService.getChannels(address="+address+")");
 		
 		return $q(function(resolve, reject) {
-			
+				
 			$rootScope.contract.SlockChain.getChannels.call({from: address}).then(function(result) {
 				var channels = [];
 				
@@ -435,7 +439,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 /**
  * CONTROLLERS
  */
- .controller('channelListController', function ($rootScope, $scope, $stateParams, $log, $filter, Notification, init, CommonEthService, SlockChainEthContractService) {
+ .controller('channelListController', function ($rootScope, $scope, $state, $stateParams, $log, $filter, Notification, init, CommonEthService, SlockChainEthContractService) {
     var crtl = this;
         
     init.then(function(accounts, network) {
@@ -463,20 +467,28 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 
 	$scope.createChannel = function() {
 		$log.debug("[START] CONTROLLER / channelListController.createChannel ()");
-		Notification.primary({message: "Creating channel ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
-		SlockChainEthContractService.createChannel($scope.channelName, $rootScope.account.address).then(function(transaction) {
-			$scope.getChannels();
-			$rootScope.getBalance();
-			$scope.channelName = "";
+		if ($scope.form.$valid) {
+			Notification.primary({message: "Creating channel ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
-			$log.debug("[END] CONTROLLER / channelListController.createChannel() : " + transaction);
-			Notification.primary({message: "Channel created [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			SlockChainEthContractService.createChannel($scope.channelName, $rootScope.account.address).then(function(transaction) {
+				$scope.getChannels();
+				$rootScope.getBalance();
+				$scope.channelName = "";
+				
+				
+				
+				$log.debug("[END] CONTROLLER / channelListController.createChannel() : " + transaction);
+				Notification.primary({message: "Channel created [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
 
-		}, function(error) {
-			$log.error("[ERROR] CONTROLLER / channelListController.createChannel() : " + error);
-			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-		});
+			}, function(error) {
+				$log.error("[ERROR] CONTROLLER / channelListController.createChannel() : " + error);
+				Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			});
+			
+		} else {
+        	$scope.$broadcast('show-errors-check-validity');
+		}
 	};
 })
 .controller('channelController', function ($rootScope, $scope, $stateParams, $log, $filter, init, Notification, CommonEthService, SlockChainEthContractService) {
@@ -527,20 +539,26 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 	
 	$scope.sendMessage = function() {
 		$log.debug("[START] CONTROLLER / channelController.sendMessage ()");
-		Notification.primary({message: "Sending message ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
-		SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account.address, $rootScope.account.username, $scope.message).then(function(transaction) {
-			$scope.getMessages();
-			$rootScope.getBalance();
-			$scope.message = "";
+		if ($scope.form.$valid) {
+			Notification.primary({message: "Sending message ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
-			$log.debug("[END] CONTROLLER / channelController.sendMessage() : " + transaction);
-			Notification.primary({message: "Message sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			SlockChainEthContractService.sendMessage($scope.channelId, $rootScope.account.address, $rootScope.account.username, $scope.message).then(function(transaction) {
+				$scope.getMessages();
+				$rootScope.getBalance();
+				$scope.message = "";
+				
+				$log.debug("[END] CONTROLLER / channelController.sendMessage() : " + transaction);
+				Notification.primary({message: "Message sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+				
+			}, function(error) {
+				$log.error("[ERROR] CONTROLLER / channelController.sendMessage() : " + error);
+				Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			});
 			
-		}, function(error) {
-			$log.error("[ERROR] CONTROLLER / channelController.sendMessage() : " + error);
-			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-		});
+		} else {
+        	$scope.$broadcast('show-errors-check-validity');
+		}
 	};
 	
 	 $rootScope.$on("onNewMessage", function(){			
@@ -560,18 +578,24 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 	
 	$scope.sendTips = function() {
 		$log.debug("[START] CONTROLLER / aboutController.sendTips ()");
-		Notification.primary({message: "Sending tips ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
-		CommonEthService.sendTransaction($rootScope.account.address, TIPS_ADDRESS, $scope.amount).then(function(transaction) {		
-			$rootScope.getBalance();
+		if ($scope.form.$valid) {
+			Notification.primary({message: "Sending tips ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
-			$log.debug("[END] CONTROLLER / aboutController.sendTips () : transaction="+transaction);
-			Notification.primary({message: "Transaction sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			CommonEthService.sendTransaction($rootScope.account.address, TIPS_ADDRESS, $scope.amount).then(function(transaction) {		
+				$rootScope.getBalance();
+				
+				$log.debug("[END] CONTROLLER / aboutController.sendTips () : transaction="+transaction);
+				Notification.primary({message: "Transaction sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+				
+			}, function(error) {
+				$log.error("[ERROR] CONTROLLER / aboutController.sendTips (): " + error);
+				Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			});
 			
-		}, function(error) {
-			$log.error("[ERROR] CONTROLLER / aboutController.sendTips (): " + error);
-			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-		});
+		} else {
+        	$scope.$broadcast('show-errors-check-validity');
+		}
 	}
 })
 .controller('accountController', function ($rootScope, $scope, $log, $state, Notification, init, CommonEthService, SlockChainEthContractService) {
@@ -586,18 +610,27 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 	
 	$scope.updateAccount = function() {
 		$log.debug("[START] CONTROLLER / accountController.updateAccount()");
-		Notification.primary({message: "Updating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
-		SlockChainEthContractService.updateAccount($rootScope.account.address, $rootScope.account.username, $rootScope.account.email).then(function(transaction) {		
-			$log.debug("[END] CONTROLLER / signupController.updateAccount() : transaction="+transaction);
-			Notification.primary({message: "Account updated [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+		$rootScope.alerts = [];
+		if ($scope.form.$valid) {
+			Notification.primary({message: "Updating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
-			$state.go('account');
+			SlockChainEthContractService.updateAccount($rootScope.account.address, $rootScope.account.username, $rootScope.account.email).then(function(transaction) {		
+				$log.debug("[END] CONTROLLER / signupController.updateAccount() : transaction="+transaction);
+				Notification.primary({message: "Account updated [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+				
+				$state.go('account');
+			
+			}, function(error) {
+				$log.error("[ERROR] CONTROLLER / signupController.updateAccount(): " + error);
+				Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			});	
+			
+		} else {
+			$rootScope.alerts.push({'type': 'danger', 'msg': 'All the required fields must be filled !'});
+        	$scope.$broadcast('show-errors-check-validity');
+		}
 		
-		}, function(error) {
-			$log.error("[ERROR] CONTROLLER / signupController.updateAccount(): " + error);
-			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-		});			
 	};
 	
 	$scope.deleteAccount = function() {
@@ -629,19 +662,27 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
     });
 	 
     $scope.createAccount = function () {
-		$log.debug("[START] CONTROLLER / signupController.createAccount() ");
-		Notification.primary({message: "Creating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 		
-		SlockChainEthContractService.createAccount($rootScope.account.address, $scope.username, $scope.email).then(function(transaction) {		
-			$log.debug("[END] CONTROLLER / signupController.createAccount() : transaction="+transaction);
-			Notification.primary({message: "Account created [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+		$rootScope.alerts = [];
+		if ($scope.form.$valid) {
+			Notification.primary({message: "Creating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
-			$state.go('home');
-		
-		}, function(error) {
-			$log.error("[ERROR] CONTROLLER / signupController.createAccount(): " + error);
-			Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
-		});							
+			SlockChainEthContractService.createAccount($rootScope.account.address, $rootScope.account.username, $rootScope.account.email).then(function(transaction) {		
+				$log.debug("[END] CONTROLLER / signupController.createAccount() : transaction="+transaction);
+				Notification.primary({message: "Account created [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+				
+				$state.go('home');
+				
+			}, function(error) {
+				$log.error("[ERROR] CONTROLLER / signupController.createAccount(): " + error);
+				Notification.error({message: error.message.substr(0, 250), replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+			});	
+			
+		} else {
+			$rootScope.alerts.push({'type': 'danger', 'msg': 'All the required fields must be filled !'});
+        	$scope.$broadcast('show-errors-check-validity');
+		}
+									
     };
 })
 .controller('errorController', function ($rootScope, $scope, $log, $state, $stateParams, init, Notification, CommonEthService, SlockChainEthContractService) {
@@ -701,7 +742,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$rootScope.contract.SlockChain.Log(function(error, result){
 			$log.debug("[DEBUG] RUN / channelController.watchLogEvent() : error="+error);
 			$log.debug("[DEBUG] RUN / channelController.watchLogEvent() : result="+result);
-
+			console.log(result);
 			if(result != undefined && result.args != undefined) {
 				var messageTitle 	= web3.toAscii(result.args.title)
 				var messageText 	= web3.toAscii(result.args.text)
@@ -736,6 +777,10 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 			$rootScope.setAccount($rootScope.account.address);
 		}
 	});
+	
+	$rootScope.closeAlert = function(index) {
+		$rootScope.alerts.splice(index, 1);
+	};
 	
 			
 	$rootScope.version = VERSION;

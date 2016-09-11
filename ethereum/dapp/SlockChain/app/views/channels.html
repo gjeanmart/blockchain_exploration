@@ -32,9 +32,20 @@
 		<div class="row">
 			<h1>New Channel</h1>
 			<form name="form" role="form" class="form" novalidate>
-				<div class="form-group">
-					<label for="channelName">Channel:</label>
-					<input type="text" class="form-control" id="channelName" ng-model="channelName">
+				<div class="form-group" show-errors='{showSuccess: true}'>
+					<label for="channelName">Channel: *</label>
+					<input 
+						type="text" 
+						class="form-control" 
+						id="channelName" 
+						name="channelName" 
+						ng-model="channelName"
+						autocomplete="off"			
+						ng-maxlength="20"
+						required />
+							
+					<p class="help-block" ng-if="form.channelName.$error.required">Required</p>
+					<p class="help-block" ng-if="form.channelName.$invalid && form.channelName.$dirty">Invalid</p>
 				</div>
 				<button type="submit" class="btn btn-default"  ng-click="createChannel()">Submit</button>
 			</form>	

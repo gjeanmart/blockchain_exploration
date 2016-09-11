@@ -15,7 +15,6 @@
 </head>
 <body>
 
-    <!-- Navigation -->
 	<nav class="navbar navbar-inverse navbar-fixed-top"  role="navigation">
 	  <div class="container">
 		<!-- Brand and toggle get grouped for better mobile display -->
@@ -33,29 +32,35 @@
 		<div class="collapse navbar-collapse" id="navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li ui-sref-active="active"><a ui-sref="home">Channels</a></li>
-				<li ui-sref-active="active"><a ui-sref="account">Account</a></li>
+				<li ui-sref-active="active"><a ui-sref="account">My Account</a></li>
 				<li ui-sref-active="active"><a ui-sref="about">About</a></li>
 			</ul>
-			<ul class="nav navbar-nav navbar-right" id="navbar-collapse-2">
-		 
-				<li style="margin: 10px;" class="col-xs-4">
+			<div class="pull-right" style="margin-top: 10px;">
+				<button class="btn btn-warning" type="button">{{network.name}}</button>
+			</div>
+			<div class="col-sm-3 col-md-3 pull-right" style="margin-top: 10px;">
+				<div class="input-group">
+					<span class="input-group-addon">ETH</span>
 					<input type="number" 
-						class="form-control "
-						id="balance"
-						name="balance"
-						ng-model="account.balance" 
-						ng-readonly="true" />
-				</li>
-				<li style="margin: 10px;">
-					<button class="btn btn-warning" type="button">{{network.name}}</button>
-				</li>
-			</ul>
+						   class="form-control"
+						   value="{{ account.balance | number : 5 }}"
+						   ng-readonly="true" />
+				</div>
+			</div>
 		</div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
 	</nav>
 
     <!-- Page Content -->
     <div class="container">
+	
+		<div uib-alert 
+			 ng-repeat="alert in alerts" 
+			 ng-class="'alert-' + (alert.type || 'warning')" 
+			 close="closeAlert($index)">
+			{{alert.msg}}
+		</div>
+	
 		<div ui-view></div>
     </div>
     <!-- /.container -->

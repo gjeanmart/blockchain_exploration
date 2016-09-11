@@ -34,7 +34,15 @@
 		<div class="row" style="margin-top: 40px;">
 			<form name="form" role="form" class="form" novalidate>
 				<div class="form-group send-wrap  col-md-12">
-					<textarea class="form-control send-message" rows="3" placeholder="Write a reply..." ng-model="message"></textarea>
+					<textarea class="form-control send-message" 
+							  rows="3" 
+							  placeholder="Write a reply..." 
+							  id="message"
+							  name="message"
+							  ng-model="message"
+							  ng-maxlength="250"
+							  required></textarea>
+					<p class="help-block" ng-if="form.message.$error.required">Required</p>
 				</div>
 				<div class="form-group  col-md-12" align="right">
 					<button rype="submit" class="btn btn-primary" ng-click="sendMessage()">Send Message</button>

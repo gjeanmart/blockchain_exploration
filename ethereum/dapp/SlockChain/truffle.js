@@ -24,7 +24,7 @@ module.exports = {
 		"bower_components/angular-ui-notification/dist/angular-ui-notification.min.js",
 		"bower_components/angular-ui-router/release/angular-ui-router.min.js",
 		"bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
-		"bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
+		"bower_components/angular-bootstrap-show-errors/src/showErrors.min.js",
 		"bower_components/jquery/dist/jquery.min.js",
 		"bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"bower_components/web3/dist/web3.min.js"
