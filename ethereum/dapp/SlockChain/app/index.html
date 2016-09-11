@@ -39,13 +39,25 @@
 				<button class="btn btn-warning" type="button">{{network.name}}</button>
 			</div>
 			<div class="col-sm-3 col-md-3 pull-right" style="margin-top: 10px;">
-				<div class="input-group">
-					<span class="input-group-addon">ETH</span>
-					<input type="number" 
-						   class="form-control"
-						   value="{{ account.balance | number : 5 }}"
-						   ng-readonly="true" />
-				</div>
+				<div class = "input-group">
+					   
+					<div class = "input-group-btn">
+						<button type = "button" class = "btn dropdown-toggle" data-toggle = "dropdown">
+							 {{account.balanceDisplayed.currency.name}} <span class = "caret"></span>
+						</button>
+						  
+						<ul class = "dropdown-menu">
+							<li ng-repeat="cur in currencies"  ng-if="cur != currency">
+								<a ng-click="convertBalance(cur)">{{cur.name}}</a>
+							</li>
+						</ul>
+					</div><!-- /btn-group -->
+					   
+					<input 	type="text" 
+							class="form-control"
+							value="{{ account.balanceDisplayed.amount | number : 5 }}"
+							ng-readonly="true" />
+				</div><!-- /input-group -->
 			</div>
 		</div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
@@ -53,14 +65,6 @@
 
     <!-- Page Content -->
     <div class="container">
-	
-		<div uib-alert 
-			 ng-repeat="alert in alerts" 
-			 ng-class="'alert-' + (alert.type || 'warning')" 
-			 close="closeAlert($index)">
-			{{alert.msg}}
-		</div>
-	
 		<div ui-view></div>
     </div>
     <!-- /.container -->

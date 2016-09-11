@@ -6,17 +6,33 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
  */
 .constant('RPC_URL'				, 'http://130.211.50.165:8545')
 .constant('VERSION'				, '0.1.2')
-.constant('DEBUG'				, false)
+.constant('DEBUG'				, true)
 .constant('TIPS_ADDRESS'		, '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
-.constant('NETWORKS'			, [{
-										id: 1,
-										name: 'LIVE'
+.constant('NETWORKS'			, [	{
+										id		: 1,
+										name	: 'LIVE'
 									}, {
-										id: 2,
-										name: 'TEST MORDEN'
+										id		: 2,
+										name	: 'TEST MORDEN'
 									}, {
-										id: 1473506519830,
-										name: 'DEV'
+										id		: 1473506519830,
+										name	: 'DEV'
+									}])
+.constant('CURRENCIES'			, [	{
+										id		: 'ETH',
+										name	: 'Ether',
+									},{
+										id		: 'USD',
+										name	: 'US Dollar',
+										symbol	: '$'
+									}, {
+										id		: 'EUR',
+										name	: 'Euro',
+										symbol	: '€'
+									}, {
+										id		: 'GBP',
+										name	: 'British Pound',
+										symbol	: '£'
 									}])
 
 
@@ -435,6 +451,31 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		
     };
 })
+.service('currencyConverter', function ($log, $q, $http) {
+    var service = this;
+    
+	service.convert = function (from, to, value) {
+		$log.debug("[START] SERVICE / currencyConverter.convert(from="+from+", to="+from+", value="+value+")");
+		
+		return $http({
+		  method: 'GET',
+		  url: 'https://www.cryptonator.com/api/ticker/'+from.toLowerCase()+'-'+to.toLowerCase()
+		}).then(function(response) {
+			var rate = response.data.ticker.price;
+			var result = value * rate;
+			
+			$log.debug("[END] SERVICE / currencyConverter.convert(from="+from+", to="+from+", value="+value+") : result="+result);
+			
+			return result;
+			
+		}, function(error) {
+			$log.debug("[ERROR] SERVICE / currencyConverter.convert(from="+from+", to="+from+", value="+value+") : error="+error);
+		});
+
+    };
+	
+
+})
 
 /**
  * CONTROLLERS
@@ -611,7 +652,6 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 	$scope.updateAccount = function() {
 		$log.debug("[START] CONTROLLER / accountController.updateAccount()");
 		
-		$rootScope.alerts = [];
 		if ($scope.form.$valid) {
 			Notification.primary({message: "Updating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
@@ -627,8 +667,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 			});	
 			
 		} else {
-			$rootScope.alerts.push({'type': 'danger', 'msg': 'All the required fields must be filled !'});
-        	$scope.$broadcast('show-errors-check-validity');
+			$scope.$broadcast('show-errors-check-validity');
 		}
 		
 	};
@@ -663,7 +702,6 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 	 
     $scope.createAccount = function () {
 		
-		$rootScope.alerts = [];
 		if ($scope.form.$valid) {
 			Notification.primary({message: "Creating account ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
@@ -679,8 +717,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 			});	
 			
 		} else {
-			$rootScope.alerts.push({'type': 'danger', 'msg': 'All the required fields must be filled !'});
-        	$scope.$broadcast('show-errors-check-validity');
+			$scope.$broadcast('show-errors-check-validity');
 		}
 									
     };
@@ -701,13 +738,37 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 /**
  * RUN
  */
-.run(function($rootScope, $log, $filter, $state, Notification, CommonEthService, SlockChainEthContractService, VERSION) {
+.run(function($rootScope, $log, $filter, $state, Notification, CommonEthService, SlockChainEthContractService, currencyConverter, VERSION, CURRENCIES) {
 	
+	// Currencies
+	$rootScope.currencies 	= CURRENCIES;
+			
+	$rootScope.convertBalance = function(currency) {
+		$log.debug("[START] RUN / root.convertBalance(currency="+currency.id+")");
+
+		if(CURRENCIES[0].id != currency.id) {
+			currencyConverter.convert(CURRENCIES[0].id, currency.id, $rootScope.account.balance).then(function (result) {
+				$rootScope.account.balanceDisplayed.amount = result;
+				$rootScope.account.balanceDisplayed.currency = currency;
+
+				$log.debug("[END] RUN / root.convertBalance(currency="+currency.id+") result="+result);
+			});
+			
+		} else {
+				$rootScope.account.balanceDisplayed.amount = $rootScope.account.balance;
+				$rootScope.account.balanceDisplayed.currency = currency;
+		}
+
+			
+	}
+	
+	// Accounts Management
+	$rootScope.account = {};
 	$rootScope.setAccount = function(address) {
 		$log.debug("[START] RUN / root.setAccount(address="+address+")");
 		
-		$rootScope.account = {};
 		$rootScope.account.address = address;
+		
 		$rootScope.getBalance();
 		
 		SlockChainEthContractService.getAccount(address, address).then(function(result) {
@@ -726,23 +787,34 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$log.debug("[END] RUN / root.setAccount(address="+address+")");	
 	};
 	
-
+	// Balance
 	$rootScope.getBalance = function() {
 		$log.debug("[START] RUN / root.getBalance()");
 		
 		CommonEthService.getBalance($rootScope.account.address).then(function(balance) {
 			$rootScope.account.balance = balance;
+			
+			if($rootScope.account.balanceDisplayed === undefined) {
+				$rootScope.account.balanceDisplayed = {
+					currency: CURRENCIES[0],
+					amount 	: balance
+				};
+			} else {
+				$rootScope.convertBalance($rootScope.account.balanceDisplayed.currency);
+			};
+			
 			$log.debug("[END] RUN / root.getBalance() : balance=" + balance);
 		});
 	};
 	
+	// Events catch
 	$rootScope.watchLogEvent = function() {
 		$log.debug("[START] RUN / channelController.watchLogEvent()");
 		
 		$rootScope.contract.SlockChain.Log(function(error, result){
 			$log.debug("[DEBUG] RUN / channelController.watchLogEvent() : error="+error);
 			$log.debug("[DEBUG] RUN / channelController.watchLogEvent() : result="+result);
-			console.log(result);
+
 			if(result != undefined && result.args != undefined) {
 				var messageTitle 	= web3.toAscii(result.args.title)
 				var messageText 	= web3.toAscii(result.args.text)
@@ -772,16 +844,13 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		});
 	};
 	
+	// Navigation
 	$rootScope.$on('$stateChangeStart',  function(event, toState, toParams, fromState, fromParams){ 
 		if($rootScope.account) {
 			$rootScope.setAccount($rootScope.account.address);
 		}
 	});
-	
-	$rootScope.closeAlert = function(index) {
-		$rootScope.alerts.splice(index, 1);
-	};
-	
 			
+	// Others
 	$rootScope.version = VERSION;
 });
