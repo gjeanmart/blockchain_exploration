@@ -5,7 +5,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
  * CONSTANTS
  */
 .constant('RPC_URL'				, 'http://130.211.50.165:8545')
-.constant('VERSION'				, '0.1.2')
+.constant('VERSION'				, '0.1.3')
 .constant('DEBUG'				, true)
 .constant('TIPS_ADDRESS'		, '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
 .constant('NETWORKS'			, [	{
@@ -132,7 +132,7 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 	$log.debug("[START] FACTORY / init()");
 		
 	return $q(function(resolve, reject) {
-		$log.debug("[DEBUG] FACTORY / init() : promise (RPC_URL="+RPC_URL+")");
+		$log.debug("[DEBUG] FACTORY / init() : promise ()");
 		
 		// Get WEB3
 		if(typeof web3 !== 'undefined') {
@@ -378,11 +378,12 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		
 		return $q(function(resolve, reject) 	{
 
-			web3.eth.getBalance(address, 'latest', null, function(err, result) {
+			web3.eth.getBalance(address, 'latest', function(err, result) {
 				$log.debug("[ERROR] SERVICE / CommonEthService.getBalance(address="+address+") : error=" + error);
 				reject(error);
 				
 			}, function(err, result) {
+				console.log(result);
 				if (err != null) {
 					$log.error("[ERROR] CommonEthService.getBalance(address="+address+") : There was an error sending a transaction : " + err);
 					reject("There was an error fetching sending your transaction : " + err);
@@ -401,7 +402,10 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		
 		return $q(function(resolve, reject) 	{
 			
-			web3.eth.sendTransaction({from: address, to: receiver, value: web3.toWei(amount, "ether")}, function(err, tx) {
+			web3.eth.sendTransaction({from: address, to: receiver, value: web3.toWei(amount, "ether")}, function(error) {
+				$log.error("[ERROR] SERVICE / CommonEthService.sendTransaction(address="+address+", receiver="+receiver+", amount="+amount+") : error=" + error);
+				reject(error);
+			}, function(err, tx) {
 				if (err != null) {
 					$log.error("[ERROR] CommonEthService.sendTransaction(address="+address+", receiver="+receiver+", amount="+amount+") : There was an error sending a transaction : " + err);
 					reject("There was an error fetching sending your transaction : " + err);
@@ -410,9 +414,6 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 				$log.debug("[END] SERVICE / CommonEthService.sendTransaction(address="+address+", receiver="+receiver+", amount="+amount+") : transaction="+tx);
 				
 				resolve(tx);
-			}, function(error) {
-				$log.debug("[ERROR] SERVICE / CommonEthService.sendTransaction(address="+address+", receiver="+receiver+", amount="+amount+") : error=" + error);
-				reject(error);
 			});
 			
 		});
@@ -606,16 +607,49 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$scope.getMessages();
 	});
 })
-.controller('aboutController', function ($rootScope, $scope, $log, Notification, init, CommonEthService, TIPS_ADDRESS) {
+.controller('aboutController', function ($rootScope, $scope, $log, Notification, init, CommonEthService, currencyConverter, TIPS_ADDRESS, CURRENCIES) {
     var crtl = this;
         
     init.then(function(accounts, network) {
 		$log.debug("[START] CONTROLLER / aboutController.init()");
 
 		$scope.tipsAddress = TIPS_ADDRESS;
-			
+		
+		if($rootScope.account.balanceDisplayed === undefined) {
+			$scope.currency = CURRENCIES[0];	
+		} else {
+			$scope.currency = $rootScope.account.balanceDisplayed.currency;
+		}
+		
+		
 		$log.debug("[END] CONTROLLER / aboutController.init()");
     });
+	
+	$scope.selectCurrency = function(currency) {
+		$log.debug("[START] CONTROLLER / aboutController.selectCurrency (currency="+currency.id+")");
+		
+		$scope.currency = currency;
+		
+		$scope.calculateAmountEther(currency);
+		
+		$log.debug("[END] CONTROLLER / aboutController.selectCurrency (currency="+currency.id+")");
+	};
+	
+	$scope.calculateAmountEther = function(currency) {
+		$log.debug("[START] CONTROLLER / aboutController.calculateAmountEther ()");
+		
+		if(CURRENCIES[0].id != $scope.currency.id) {
+			currencyConverter.convert(CURRENCIES[0].id, $scope.currency.id, $scope.amount).then(function (result) {
+				$scope.amountEther = result;
+
+				$log.debug("[END] CONTROLLER / aboutController.calculateAmountEther() : amount(eth)="+$scope.amountEther);
+			});
+			
+		} else {
+			$scope.amountEther = $scope.amount;
+			$log.debug("[END] CONTROLLER / aboutController.calculateAmountEther() : amount(eth)="+$scope.amountEther);
+		}		
+	};
 	
 	$scope.sendTips = function() {
 		$log.debug("[START] CONTROLLER / aboutController.sendTips ()");
@@ -623,11 +657,14 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		if ($scope.form.$valid) {
 			Notification.primary({message: "Sending tips ...", delay: null, positionY: 'bottom', positionX: 'right'});
 			
-			CommonEthService.sendTransaction($rootScope.account.address, TIPS_ADDRESS, $scope.amount).then(function(transaction) {		
+			CommonEthService.sendTransaction($rootScope.account.address, TIPS_ADDRESS, $scope.amountEther).then(function(transaction) {		
 				$rootScope.getBalance();
 				
 				$log.debug("[END] CONTROLLER / aboutController.sendTips () : transaction="+transaction);
 				Notification.primary({message: "Transaction sent [tx: "+transaction+"]", replaceMessage: true, delay: 10000, positionY: 'bottom', positionX: 'right'});
+				
+				$scope.amountEther = null;
+				$scope.amount = null;
 				
 			}, function(error) {
 				$log.error("[ERROR] CONTROLLER / aboutController.sendTips (): " + error);
@@ -812,9 +849,6 @@ var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notific
 		$log.debug("[START] RUN / channelController.watchLogEvent()");
 		
 		$rootScope.contract.SlockChain.Log(function(error, result){
-			$log.debug("[DEBUG] RUN / channelController.watchLogEvent() : error="+error);
-			$log.debug("[DEBUG] RUN / channelController.watchLogEvent() : result="+result);
-
 			if(result != undefined && result.args != undefined) {
 				var messageTitle 	= web3.toAscii(result.args.title)
 				var messageText 	= web3.toAscii(result.args.text)

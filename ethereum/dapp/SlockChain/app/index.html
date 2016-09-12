@@ -47,7 +47,7 @@
 						</button>
 						  
 						<ul class = "dropdown-menu">
-							<li ng-repeat="cur in currencies"  ng-if="cur != currency">
+							<li ng-repeat="cur in currencies" ng-if="cur.id != account.balanceDisplayed.currency.id">
 								<a ng-click="convertBalance(cur)">{{cur.name}}</a>
 							</li>
 						</ul>
