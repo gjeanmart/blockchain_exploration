@@ -12,6 +12,4 @@ library  Utils {
 		}
 		return string(bytesString);
 	}
-
-	
 }
