@@ -1,7 +1,8 @@
-contract Killable is Ownable {
+contract Killable {
   function kill() {
-    if (msg.sender == owner) suicide(owner);
+    if (msg.sender == owner) { suicide(owner); }
   }
+}
 
 contract Ownable {
   address public owner;
@@ -11,7 +12,8 @@ contract Ownable {
   }
 
   modifier onlyOwner() {
-    if (msg.sender == owner)
+    if (msg.sender == owner) {
       _
+	}
   }
 }
