@@ -1,4 +1,4 @@
-import './Common.sol';
+import './Pot.sol';
 
 /**
  * Pot
@@ -25,6 +25,7 @@ contract PotRegistry {
 	
 	// Variables
 	mapping(address => PotMetadata) pots;
+	mapping(uint 	=> address) 	potsID;
 	uint 						 	nbPots;
 	address 					 	lastCreated;
 	/***********************/
@@ -33,8 +34,8 @@ contract PotRegistry {
 	/***********************
 	 * Functions	   
 	 */
-	function createPot(bytes32 _name, bytes32 _description, uint _endDate, uint _goal) returns (address) {
-		address newPotAddress = new Pot(_name, _description, _endDate, _goal);
+	function createPot(bytes32 _name, bytes32 _description, uint _endDate, uint256 _goal) returns (address) {
+		address newPotAddress = new Pot(msg.sender, _name, _description, _endDate, _goal);
 		
 		PotMetadata memory metadata; 
 		metadata.name 				= _name;
@@ -42,18 +43,19 @@ contract PotRegistry {
 		metadata.contractAddress 	= newPotAddress;
 		
 		pots[newPotAddress] = metadata;
+		potsID[nbPots]		= newPotAddress;
 		
 		nbPots += 1;
 		
 		return newPotAddress;
 	}
 	 
-	function getPot(address _address) isEnded constant returns (address, uint, bytes32, bytes32)  {
+	function getPot(address _address) constant returns (address, bytes32, bytes32)  {
 	
 		// Check if the pot exists in the registry
 		//TODO
 		
-		return (pots[_address].contractAddress, pots[_address].id, pots[_address].name, pots[_address].description);
+		return (pots[_address].contractAddress, pots[_address].name, pots[_address].description);
 	}
 
 	function getPots(uint pageNo, uint pageSize) constant returns (address[], bytes32[], bytes32[]) {
@@ -82,7 +84,8 @@ contract PotRegistry {
 		uint end = pageNo * length;
 		
 		for (var i = start; i < end; i++) { 
-			Pot memory pot = pots[i];
+			address potAddress = potsID[i];
+			PotMetadata memory pot = pots[potAddress];
 		
 			potAddressArray[i] 	= pot.contractAddress;
 			potNameArray[i] 	= pot.name;
@@ -91,7 +94,7 @@ contract PotRegistry {
 		
 		return (potAddressArray, potNameArray, potDescArray);
 	}
-	/***********************
+	/***********************/
 	
 	
 }
