@@ -162,10 +162,14 @@ contract Pot is Killable {
 	
 	function withdraw() isEnded returns (bool _success)  {
 	
-		//TODO Send money
-		total = 0;
+		if (!recipient.send(total)) {
+			// TODO LOG ERROR
+			throw;
+        }
 	
-		Withdraw(msg.sender, total);
+		Withdraw(msg.sender, total
+		
+		total = 0;
 		
 		return true;
 	}
