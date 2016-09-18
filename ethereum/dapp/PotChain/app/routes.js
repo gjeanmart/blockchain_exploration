@@ -20,30 +20,30 @@
             
             /*******************************************************
             * POTS LIST
-            ******************************************************
+            *******************************************************/
             .state('pot-list', {
                 url         : '/pot/',
                 templateUrl : 'views/pot-list.html',
-                controller  : 'PotListController'
-            })*/
+                controller  : 'potListController'
+            })
             
             /*******************************************************
             * CREATE POT
-            ******************************************************
+            *******************************************************/
             .state('pot-create', {
                 url         : '/pot/create',
                 templateUrl : 'views/pot-create.html',
                 controller  : 'potCreateController'
-            })*/
+            })
             
             /*******************************************************
             * POT
-            ******************************************************
+            *******************************************************/
             .state('pot', {
                 url         : '/pot/:address',
                 templateUrl : 'views/pot.html',
-                controller  : 'potController'
-            })*/
+                controller  : 'potDetailsController'
+            })
             
             
             /*******************************************************

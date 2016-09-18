@@ -3,9 +3,9 @@ module.exports = {
 	/* HTML */
     "index.html"			: "index.html",
     "views/home.html"		: "components/home/home.html",
-    //"views/pot.html"		: "components/pot/pot.html",
-    //"views/pot-list.html"	: "components/pot/pot-list.html",
-    //"views/pot-create.html"	: "components/pot/pot-create.html",
+    "views/pot-list.html"	: "components/pot/pot-list.html",
+    "views/pot-create.html"	: "components/pot/pot-create.html",
+    "views/pot.html"		: "components/pot/pot.html",
 	
 	/* JAVASCRIPT */
     "lib.js": [
@@ -21,7 +21,8 @@ module.exports = {
 		"assets/libs/bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"assets/libs/bower_components/web3/dist/web3.min.js",
 		"assets/libs/bower_components/sprintf/dist/angular-sprintf.min.js",
-		"assets/libs/bower_components/sprintf/dist/sprintf.min.js"
+		"assets/libs/bower_components/sprintf/dist/sprintf.min.js",
+		"assets/libs/bower_components/ng-table/dist/ng-table.min.js"
     ],
     "app.js"	: [
 		"app.js",
@@ -43,6 +44,9 @@ module.exports = {
 	  
 		// Controllers
 		"components/home/home-controller.js",
+		"components/pot/pot-list-controller.js",
+		"components/pot/pot-create-controller.js",
+		"components/pot/pot-details-controller.js"
     ],
 	
 	/* CSS */
@@ -50,13 +54,18 @@ module.exports = {
 		"assets/libs/bower_components/bootstrap/dist/css/bootstrap.min.css",
 		"assets/libs/bower_components/angular-bootstrap/ui-bootstrap-csp.css",
 		"assets/libs/bower_components/angular-ui-notification/dist/angular-ui-notification.min.css",
+		"assets/libs/bower_components/font-awesome/css/font-awesome.min.css",
+		"assets/libs/bower_components/ng-table/dist/ng-table.min.css"
     ],
     "app.css"	: [
 		"assets/css/app.css"
     ],
 	
 	/* IMAGES */
-    "images/"	: "assets/images/"
+    "images/"	: "assets/images/",
+	
+	/* FONTS */
+    "fonts/"	: "assets/libs/bower_components/bootstrap/fonts/",
   },
   
   

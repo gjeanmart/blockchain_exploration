@@ -58,14 +58,14 @@ contract PotRegistry {
 		return (pots[_address].contractAddress, pots[_address].name, pots[_address].description);
 	}
 
-	function getPots(uint _pageNo, uint _pageSize) constant returns (address[], bytes32[], bytes32[]) {
+	function getPots(uint _pageNo, uint _pageSize) constant returns (address[], bytes32[], bytes32[], uint) {
 	
 		// Default values
 		if(_pageNo < 1) {
 			_pageNo = DEFAULT_PAGE_NO;
 		}
 		if(_pageSize < 1) {
-			_pageNo = DEFAULT_PAGE_SIZE;
+			_pageSize = DEFAULT_PAGE_SIZE;
 		}
 		
 		// Calculate final length
@@ -74,16 +74,13 @@ contract PotRegistry {
 			length = _pageSize;
 		}
 		
-		// Init outout array
+		// Init outout arrays
 		address[] 	memory potAddressArray 	= new address[](length);
 		bytes32[] 	memory potNameArray 	= new bytes32[](length);
 		bytes32[] 	memory potDescArray		= new bytes32[](length);
 
-		// Calculta the window
-		uint start = (_pageNo - 1) * length;
-		uint end = _pageNo * length;
-		
-		for (var i = start; i < end; i++) { 
+		// Calculate the window
+		for (var i = (_pageNo - 1) * length; i < _pageNo * length; i++) { 
 			address potAddress = potsID[i];
 			PotMetadata memory pot = pots[potAddress];
 		
@@ -92,7 +89,7 @@ contract PotRegistry {
 			potDescArray[i] 	= pot.description;
 		}
 		
-		return (potAddressArray, potNameArray, potDescArray);
+		return (potAddressArray, potNameArray, potDescArray, nbPots);
 	}
 	/***********************/
 	

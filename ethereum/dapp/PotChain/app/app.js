@@ -12,7 +12,8 @@
             'ngResource', 
             'ui-notification', 
             'ui.bootstrap', 
-            'ui.bootstrap.showErrors'
+            'ui.bootstrap.showErrors',
+			'ngTable'
         ]
     );
     

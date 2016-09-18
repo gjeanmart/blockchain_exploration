@@ -1,0 +1,106 @@
+
+<h2>POT CREATE</h2>
+	
+<div class="panel-group">
+	<div class="panel panel-default">
+		<div class="panel-heading">Create a pot</div>
+		
+		<div class="panel-body">
+			<form name="form" role="form" class="form"  novalidate>
+				<div class="form-group col-md-12" show-errors>
+					<label for="name">Name: *</label>
+					<input 
+						type="text" 
+						class="form-control" 
+						id="name" 
+						name="name" 
+						placeholder="" 
+						ng-model="pot.name"
+						autocomplete="off"			
+						ng-maxlength="20"
+						required />
+								
+					<p class="help-block" ng-if="form.name.$error.required">Required</p>
+					<p class="help-block" ng-if="form.name.$invalid && form.name.$dirty">Invalid</p>
+				</div>
+				
+				<div class="form-group col-md-12" show-errors>
+					<label for="description">Description: *</label>
+						<textarea class="form-control send-message" 
+								  rows="3" 
+								  id="description"
+								  name="description"
+								  placeholder="" 
+								  ng-model="pot.description"
+								  ng-maxlength="250"
+								  required></textarea>
+					<p class="help-block" ng-if="form.description.$error.required">Required</p>
+					<p class="help-block" ng-if="form.description.$invalid && form.name.$dirty">Invalid</p>
+				</div>
+				
+			   <div class="form-group col-md-6"  show-errors>
+					<label class="control-label">End date *</label>
+		
+					<p class="input-group">
+						<input 	type="text" 
+								class="form-control" 
+								id="endDate"
+								name="endDate"
+								placeholder="{{datePicker.formatLabel}}" 
+								ng-model="pot.endDate" 
+								uib-datepicker-popup="{{datePicker.format}}"
+								datepicker-options="datePicker.datePickerDefaultOptionNoPast" 
+								is-open="datePicker.instances['create-pot-endDate']"  
+								close-text="Close" 
+								required />
+						<span class="input-group-btn">
+							 <button type="button" 
+									 class="btn btn-default" 
+									 ng-click="datePicker.open($event, 'create-pot-endDate')">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						 </span>
+					</p>
+					<p class="help-block" ng-if="form.endDate.$error.required">Required</p>
+					<p class="help-block" ng-if="form.endDate.$invalid && form.endDate.$dirty">Invalid</p>	
+				</div> 
+				
+				<div class="form-group col-md-6">
+					<label for="goal">Goal: *</label>
+					<div class = "form-group" show-errors> 
+						<div class = "input-group"> 
+							<div class = "input-group-btn">
+								<button type = "button" class = "btn dropdown-toggle" data-toggle = "dropdown">
+									 {{currency.name}} <span class = "caret"></span>
+								</button>
+									  
+								<ul class = "dropdown-menu">
+									<li ng-repeat="cur in currencies"  ng-if="cur != currency">
+										<a ng-click="selectCurrency(cur)">{{cur.name}}</a>
+									</li>
+								</ul>
+							</div>
+								   
+							<input 	type="number" 
+									class="form-control"
+									id="goal"
+									name="goal"
+									ng-model="pot.goal"
+									ng-change="calculateAmountEther()"
+									min="0.0001"
+									required />
+						</div>
+										
+						<p class="help-block" ng-if="!form.goal.$valid">Required</p>
+						<p ng-if="form.goal.$valid">{{pot.goalEther | number : 5 }} ethers</p>
+					</div>
+				</div>
+				
+				<div class="form-group col-md-12" align="right">
+					<button type="submit" class="btn btn-primary" ng-click="createPot()">Submit</button>
+				</div>
+			</form>	
+		</div>
+	</div>
+</div>
+		

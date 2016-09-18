@@ -27,7 +27,38 @@
                 </button>
                 <a class="navbar-brand" ui-sref="home">PotChain</a>
             </div>
-        </div>
+			
+			<div class="collapse navbar-collapse" id="navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li ui-sref-active="active"><a ui-sref="home">Home</a></li>
+					<li ui-sref-active="active"><a ui-sref="pot-list">Pots</a></li>
+				</ul>
+				<div class="pull-right" style="margin-top: 10px;">
+					<button class="btn btn-warning" type="button">{{network.name}}</button>
+				</div>
+				<div class="col-sm-3 col-md-3 pull-right" style="margin-top: 10px;">
+					<div class = "input-group">
+						   
+						<div class = "input-group-btn">
+							<button type = "button" class = "btn dropdown-toggle" data-toggle = "dropdown">
+								 {{account.balanceDisplayed.currency.name}} <span class = "caret"></span>
+							</button>
+							  
+							<ul class = "dropdown-menu">
+								<li ng-repeat="cur in currencies" ng-if="cur.id != account.balanceDisplayed.currency.id">
+									<a ng-click="convertBalance(cur)">{{cur.name}}</a>
+								</li>
+							</ul>
+						</div>
+						   
+						<input 	type="text" 
+								class="form-control"
+								value="{{ account.balanceDisplayed.amount | number : 5 }}"
+								ng-readonly="true" />
+					</div>
+				</div>
+			</div>
+		</div>
     </nav>
 
     
@@ -46,7 +77,6 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Contract address xxx</p>
                     <p>Copyright &copy; PotChain 2016 [v.{{version}}]</p>
                 </div>
             </div>

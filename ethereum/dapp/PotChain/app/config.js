@@ -10,6 +10,8 @@
     .constant('RPC_URL'             , 'http://130.211.50.165:8545')
     .constant('VERSION'             , '0.0.1')
     .constant('DEBUG'               , true)
+    .constant('DATE_FORMAT'         , 'dd/MM/yyyy')
+    .constant('PAGE_SIZE_DEFAULT'   , 10)
     .constant('TIPS_ADDRESS'        , '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
     .constant('NETWORKS'            , [ {
                                             id      : 1,
@@ -17,9 +19,6 @@
                                         }, {
                                             id      : 2,
                                             name    : 'TEST MORDEN'
-                                        }, {
-                                            id      : 1473506519830,
-                                            name    : 'DEV'
                                         }])
     .constant('CURRENCIES'          , [ {
                                             id      : 'ETH',
