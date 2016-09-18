@@ -6,7 +6,7 @@ import './Killable.sol';
 contract Pot is Killable {
 
 	/***********************
-	 * Structure		   
+	 * Structure and enums	   
 	 */
     struct Contribution {
         address 	from;
@@ -46,12 +46,12 @@ contract Pot is Killable {
 	 * Modifier	   
 	 */
 	modifier isActive {
-		if (ended == false) {
+		if(endDate > now && ended == false) {
 			_
 		}
 	}
 	modifier isEnded {
-		if (ended == true) {
+		if (endDate <= now || ended == true) {
 			_
 		}
 	}
@@ -144,7 +144,7 @@ contract Pot is Killable {
 	}
 
 	 
-	function contribute(bytes32 _username, bytes32 _message) isActive returns (bool _success) {
+	function contribute(bytes32 _username, bytes32 _message) isActive returns (bool) {
 		Contribution memory contribution;
 		
 		contribution.from 			= msg.sender;
@@ -160,17 +160,23 @@ contract Pot is Killable {
 		return true;
 	}
 	
-	function withdraw() isEnded returns (bool _success)  {
+	function withdraw() isEnded onlyRecipient returns (bool)  {
 	
 		if (!recipient.send(total)) {
 			// TODO LOG ERROR
 			throw;
         }
 	
-		Withdraw(msg.sender, total
+		Withdraw(msg.sender, total);
 		
 		total = 0;
 		
+		return true;
+	}
+	
+	function endPot() onlyOwner returns (bool)  {
+		ended = true;
+
 		return true;
 	}
 	/***********************/

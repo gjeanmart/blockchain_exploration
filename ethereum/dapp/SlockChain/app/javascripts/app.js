@@ -1,5 +1,13 @@
-
-var app = angular.module('SlockChain', [ 'ui.router',  'ngResource', 'ui-notification', 'ui.bootstrap', 'ui.bootstrap.showErrors'])
+	var app = angular.module(
+		'SlockChain', 
+		[ 	'ui.router',  
+			'ngResource', 
+			'ui-notification', 
+			'ui.bootstrap', 
+			'ui.bootstrap.showErrors'
+		]
+	)
+	
 
 /**
  * CONSTANTS
