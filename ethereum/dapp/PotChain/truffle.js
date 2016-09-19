@@ -55,7 +55,8 @@ module.exports = {
 		"assets/libs/bower_components/angular-bootstrap/ui-bootstrap-csp.css",
 		"assets/libs/bower_components/angular-ui-notification/dist/angular-ui-notification.min.css",
 		"assets/libs/bower_components/font-awesome/css/font-awesome.min.css",
-		"assets/libs/bower_components/ng-table/dist/ng-table.min.css"
+		"assets/libs/bower_components/ng-table/dist/ng-table.min.css",
+		"assets/libs/bower_components/bootstrap-social/bootstrap-social.css"
     ],
     "app.css"	: [
 		"assets/css/app.css"
@@ -66,6 +67,8 @@ module.exports = {
 	
 	/* FONTS */
     "fonts/"	: "assets/libs/bower_components/bootstrap/fonts/",
+    //"fonts/"	: "assets/libs/bower_components/font-awesome/fonts/",
+
   },
   
   

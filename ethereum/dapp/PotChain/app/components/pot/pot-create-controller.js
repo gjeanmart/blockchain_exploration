@@ -42,7 +42,7 @@
 			$log.debug("[pot-create-controller.js - calculateAmountEther(currency="+currency+")] (START)");
 			
 			if(CURRENCIES[0].id != $scope.currency.id) {
-				currencyConverterService.convert(CURRENCIES[0].id, $scope.currency.id, $scope.pot.goal).then(function (result) {
+				currencyConverterService.convert($scope.currency.id, CURRENCIES[0].id, $scope.pot.goal).then(function (result) {
 					$scope.pot.goalEther = result;
 
 					$log.debug("[pot-create-controller.js - calculateAmountEther(currency="+currency+")] (END) goal(eth)="+$scope.pot.goalEther);

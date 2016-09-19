@@ -68,9 +68,10 @@
         });
                 
         // Constants
-        $rootScope.version = VERSION;
         $rootScope.currencies = CURRENCIES;
+        $rootScope.VERSION = VERSION;
         $rootScope.PAGE_SIZE_DEFAULT = PAGE_SIZE_DEFAULT;
+        $rootScope.DATE_FORMAT = DATE_FORMAT;
     }]);
 
 })();

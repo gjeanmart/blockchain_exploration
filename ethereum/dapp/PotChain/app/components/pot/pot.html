@@ -1,7 +1,78 @@
 
 <h2>POT</h2>
 	
-<div>
-	{{address}}
-</div>
-		
+    <div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="col-xs-12 col-sm-4">
+						<figure>
+							<img class="img-circle img-responsive" alt="" src="http://placehold.it/300x300">
+						</figure>
+              
+						<div class="row">
+							<div class="col-xs-12 social-btns">
+                    
+							</div>
+						</div>
+              
+					</div>
+
+					<div class="col-xs-12 col-sm-8">
+						<ul class="list-group">
+							<li class="list-group-item"> {{pot.name}}</li>
+							<li class="list-group-item"> {{pot.description}}</li>
+							<li class="list-group-item"><i class="glyphicon glyphicon-calendar"></i> {{pot.startDate | date:'dd/MM/yyyy'}}</li>
+							<li class="list-group-item"><i class="glyphicon glyphicon-calendar"></i> {{pot.endDate | date:'dd/MM/yyyy'}}</li>
+							<li class="list-group-item">
+								<div class = "input-group"> 
+									<div class = "input-group-btn">
+										<button type = "button" class = "btn dropdown-toggle" data-toggle = "dropdown">
+											{{currency.name}} <span class = "caret"></span>
+										</button>
+									  
+										<ul class = "dropdown-menu">
+											<li ng-repeat="cur in currencies"  ng-if="cur != currency">
+												<a ng-click="selectCurrency(cur)">{{cur.name}}</a>
+											</li>
+										</ul>
+									</div>
+								
+									<input type="text" class="form-control" value="{{pot.total}}" ng-readonly="true"  />
+									<span class="input-group-btn" style="width:0px;"></span>
+									<input type="text" class="form-control"  value="{{pot.goal}}" ng-readonly="true"  />
+
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>	
+			
+
+		<div class="panel-body">
+			<textarea class="form-control" placeholder="Enter here for tweet..." rows="3"></textarea>
+			<br>
+			<a href="#" class="btn btn-primary btn-sm pull-right">Send a message</a>
+			
+			<div class="clearfix"></div>
+			<hr>
+			<ul class="media-list">
+				<li class="media">
+                    <a href="#" class="pull-left">
+						<img src="https://minotar.net/avatar/Ewwe" alt="" class="img-circle" height="50px">
+                    </a>
+                    <div class="media-body">
+						<span class="text-muted pull-right">
+							<small class="text-muted">30 min ago</small>
+						</span>
+						<strong class="text-success">@ Rexona Kumi</strong>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+						</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
