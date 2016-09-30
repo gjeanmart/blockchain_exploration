@@ -123,7 +123,7 @@ contract Pot is Killable {
 		return (contributionAddressArray, contributionAmountArray, contributionUsernameArray, contributionMessageArray, contributionDateArray);	
 	}
 	
-	function getMessages() constant returns (bytes32[], bytes32[], address[], uint[]) {
+	function getMessages() constant returns (bytes32[], bytes32[], address[], uint[], uint) {
 		uint length = messages.length;
 		
 		address[] 	memory messagesAddressArray 	= new address[](length);
@@ -140,7 +140,7 @@ contract Pot is Killable {
 			messagesDateArray[i] 		= message.date;
 		}
 		
-		return (messagesTextArray, messagesUsernameArray, messagesAddressArray, messagesDateArray);
+		return (messagesTextArray, messagesUsernameArray, messagesAddressArray, messagesDateArray, length);
 	}
 	
 	function sendMessage(bytes32 _username, bytes32 _message) returns (bool) {

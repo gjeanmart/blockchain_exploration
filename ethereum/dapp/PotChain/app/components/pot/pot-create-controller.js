@@ -72,7 +72,7 @@
 			} else {
 				$scope.$broadcast('show-errors-check-validity');
 			}
-		}
+		};
         
         
 

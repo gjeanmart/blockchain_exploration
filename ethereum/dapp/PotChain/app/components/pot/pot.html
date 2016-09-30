@@ -52,24 +52,47 @@
 			
 
 		<div class="panel-body">
-			<textarea class="form-control" placeholder="Enter here for tweet..." rows="3"></textarea>
-			<br>
-			<a href="#" class="btn btn-primary btn-sm pull-right">Send a message</a>
-			
+			<form name="form" role="form" class="form" novalidate>
+				<div class="form-group col-md-6" show-errors>
+					<label for="username">Username: *</label>
+					<input 
+						type="text" 
+						class="form-control" 
+						id="username" 
+						name="username" 
+						placeholder="" 
+						ng-model="message.username"
+						autocomplete="off"			
+						ng-maxlength="20"
+						required />
+				</div>
+				<div class="form-group send-wrap  col-md-12" show-errors>
+					<textarea class="form-control send-message" 
+							  rows="3" 
+							  placeholder="send a message" 
+							  id="message"
+							  name="message"
+							  ng-model="message.text"
+							  ng-maxlength="250"
+							  required></textarea>
+				</div>
+				<br>
+				<button ng-click="sendMessage()" class="btn btn-primary btn-sm pull-right">Send a message</button>
+			</form>
 			<div class="clearfix"></div>
 			<hr>
 			<ul class="media-list">
-				<li class="media">
+				<li class="media" ng-repeat="message in messages">
                     <a href="#" class="pull-left">
 						<img src="https://minotar.net/avatar/Ewwe" alt="" class="img-circle" height="50px">
                     </a>
                     <div class="media-body">
 						<span class="text-muted pull-right">
-							<small class="text-muted">30 min ago</small>
+							<small class="text-muted">{{message.date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
 						</span>
-						<strong class="text-success">@ Rexona Kumi</strong>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-						</p>
+						<strong class="text-success">{{message.username}} [{{message.sender}}]</strong>
+						<p>{{message.text}}</p>
+
 					</div>
 				</li>
 			</ul>

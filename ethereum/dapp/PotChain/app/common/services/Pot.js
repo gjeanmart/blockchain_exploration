@@ -49,6 +49,80 @@
 			});
 		};
 		
+		service.sendMessage	 = function(contractAddress, username, message, senderAddress) {
+			$log.debug("[Pot.js / sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")] (START)");
+/*			
+			return $q(function(resolve, reject) 	{
+				service.getContract(contractAddress).sendMessage(username, message, {from: senderAddress}).then(function(transaction) {
+					$log.debug("[Pot.js / sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")] (END) transaction="+transaction);
+					resolve(transaction);
+					
+				}, function(error) {
+					$log.error("[Pot.js / sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")] (ERROR) error="+error);
+					reject(error);
+				});
+			});
+*/
+
+			return $q(function(resolve, reject) 	{
+				service.getContract(contractAddress).sendMessage(username, message, {from: senderAddress})
+				.then(function(arg1, arg2, arg3) {
+					$log.debug("callback 1 : arg1="+arg1+", arg2="+arg2+", arg3="+arg3);
+				}, function(error) {
+					$log.error("callback 1 : error="+error);
+					
+					
+				}).then(function(arg1, arg2, arg3) {
+					$log.debug("callback 2 : arg1="+arg1+", arg2="+arg2+", arg3="+arg3);
+				}, function(error) {
+					$log.error("callback 2 : error="+error);
+					
+					
+				}).then(function(arg1, arg2, arg3) {
+					$log.debug("callback 3 : arg1="+arg1+", arg2="+arg2+", arg3="+arg3);	
+				}, function(error) {
+					$log.error("callback 3 : error="+error);
+					
+					
+				}).catch(function(err) {
+					$log.error("catch : err="+err);
+				});
+			});
+
+		};
+		
+		service.getMessages = function (contractAddress, pageNo, pageSize, senderAddress) {
+			$log.debug("[Pot.js / getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")] (START)");
+			
+			return $q(function(resolve, reject) 	{
+				service.getContract(contractAddress).getMessages.call(pageNo, pageSize, {from: senderAddress}).then(function(result) {
+					$log.debug(result);
+					
+					var messages = [];
+					
+					for(var i = 0; i < result[0].length; i++) {
+						var message = {
+							sender		: result[2][i],
+							username	: web3.toAscii(result[1][i]),
+							text		: web3.toAscii(result[0][i]),
+							date		: new Date(result[3][i].toNumber() * 1000)
+						};
+						messages.push(message);
+					}
+					
+					$log.debug("[[Pot.js / getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")]  (END) nb result=" + messages.length);
+					resolve({
+						data : messages,
+						total: result[4].toNumber()
+					});
+					
+				}, function(error) {
+					$log.error("[Pot.js / getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")] (ERROR) error="+error);
+					reject(error);
+				});
+			});
+		};
+		
     }
 	
 })();

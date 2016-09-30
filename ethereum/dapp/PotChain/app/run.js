@@ -55,7 +55,7 @@
     	    method.datePickerDefaultOptionNoFuture 	= method.getOptions(null, new Date());
     	    method.datePickerDefaultOptionNoPast 	= method.getOptions(new Date(), null);
 
-    	    var formats = [DATE_FORMAT]; // TODO injection from property
+    	    var formats = [DATE_FORMAT];
     	    method.format = formats[0];
     	    method.formatLabel = DATE_FORMAT.toLowerCase();
     	    
