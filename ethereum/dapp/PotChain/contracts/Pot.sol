@@ -142,6 +142,19 @@ contract Pot is Killable {
 		
 		return (messagesTextArray, messagesUsernameArray, messagesAddressArray, messagesDateArray);
 	}
+	
+	function sendMessage(bytes32 _username, bytes32 _message) returns (bool) {
+		Message memory message;
+		
+		message.from 		= msg.sender;
+		message.text 		= _message;
+		message.date 		= now;
+		message.username 	= _username;
+		
+		messages.push(message);
+		
+		return true;
+	}
 
 	 
 	function contribute(bytes32 _username, bytes32 _message) isActive returns (bool) {
@@ -156,6 +169,8 @@ contract Pot is Killable {
 		total += msg.value;
 		
 		Contribute(msg.sender, _username, _message, msg.value);
+		
+		contributions.push(contribution);
 		
 		return true;
 	}
