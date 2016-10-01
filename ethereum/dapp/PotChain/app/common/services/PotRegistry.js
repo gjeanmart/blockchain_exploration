@@ -17,14 +17,13 @@
 			$log.debug("[PotRegistry.js / createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+")] (START)");
 			
 			return $q(function(resolve, reject) 	{
-				var x = service.contract.createPot(name, description, endDate / 1000, goal, {from: address}).then(function(transaction) {
+				service.contract.createPot(name, description, endDate / 1000, goal, {from: address}).then(function(transaction) {
 					$log.debug("[PotRegistry.js / createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+")] (END) transaction="+transaction);
 					resolve(transaction);
 				}, function(error) {
 					$log.error("[PotRegistry.js / createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+")] (ERROR) error="+error);
 					reject(error);
 				});
-				console.log(x);
 			});
 		};
 	

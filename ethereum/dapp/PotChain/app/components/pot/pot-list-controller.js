@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').controller('potListController', potListController);
     
-    potListController.$inject  = ['$scope', '$rootScope', '$log', '$state', 'NgTableParams', 'init', 'PotRegistryContractService'];
+    potListController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$filter', 'NgTableParams', 'init', 'PotRegistryContractService'];
 
-    function potListController ($scope, $rootScope, $log, $state, NgTableParams, init, PotRegistryContractService) {
+    function potListController ($scope, $rootScope, $log, $state, $filter, NgTableParams, init, PotRegistryContractService) {
 	
         $scope.initialize = function() {
             $log.debug("[pot-list-controller.js - initialize()] (START) controller 'potListController'");
