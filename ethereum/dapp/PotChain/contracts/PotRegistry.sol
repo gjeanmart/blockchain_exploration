@@ -34,8 +34,8 @@ contract PotRegistry {
 	/***********************
 	 * Functions	   
 	 */
-	function createPot(bytes32 _name, bytes32 _description, uint _endDate, uint256 _goal) returns (address) {
-		address newPotAddress = new Pot(msg.sender, _name, _description, _endDate, _goal);
+	function createPot(bytes32 _name, bytes32 _description, uint _endDate, uint256 _goal, address _recipient) returns (address) {
+		address newPotAddress = new Pot(msg.sender, _name, _description, _endDate, _goal, _recipient);
 		
 		PotMetadata memory metadata; 
 		metadata.name 				= _name;

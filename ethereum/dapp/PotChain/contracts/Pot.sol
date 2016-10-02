@@ -73,7 +73,7 @@ contract Pot is Killable {
 	/***********************
 	 * Constructor	   
 	 */
-	function Pot(address _owner, bytes32 _name, bytes32 _description, uint _endDate, uint256 _goal) {
+	function Pot(address _owner, bytes32 _name, bytes32 _description, uint _endDate, uint256 _goal, address _recipient) {
 		//TODO check if name and description are not null
 		
 		if(_endDate <= 0) {
@@ -89,6 +89,7 @@ contract Pot is Killable {
 		startDate 		= now;
 		endDate 		= _endDate;
 		goal 			= _goal;
+		recipient		= _recipient;
 	}
 	/***********************/
 	
@@ -100,7 +101,7 @@ contract Pot is Killable {
 		return (owner, name, description, total, startDate, endDate, goal, recipient, ended);
 	}
 	
-	function getContributions() constant returns (address[] _from, uint[] _amount, bytes32[] _username, bytes32[] _message, uint[] date) {
+	function getContributions() constant returns (address[] _from, uint[] _amount, bytes32[] _username, bytes32[] _message, uint[] date, uint) {
 	
 		uint length = contributions.length;
 		
@@ -110,7 +111,7 @@ contract Pot is Killable {
 		bytes32[] 	memory contributionMessageArray		= new bytes32[](length);
 		uint[] 		memory contributionDateArray		= new uint[](length);
 
-		for (var i = 0; i < length; i++) { 
+		for (var i = length-1; i != 0 ; i--) { 
 			Contribution memory contribution = contributions[i];
 		
 			contributionAddressArray[i] = contribution.from;
@@ -120,7 +121,7 @@ contract Pot is Killable {
 			contributionDateArray[i] 	= contribution.date;
 		}
 		
-		return (contributionAddressArray, contributionAmountArray, contributionUsernameArray, contributionMessageArray, contributionDateArray);	
+		return (contributionAddressArray, contributionAmountArray, contributionUsernameArray, contributionMessageArray, contributionDateArray, length);	
 	}
 	
 	function getMessages() constant returns (bytes32[], bytes32[], address[], uint[], uint) {

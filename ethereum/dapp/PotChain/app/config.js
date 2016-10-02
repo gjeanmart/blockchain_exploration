@@ -53,13 +53,13 @@
     // Notification default configuration
     .config(function(NotificationProvider) {
         NotificationProvider.setOptions({
-            delay               : 10000,
+            delay               : 60000,
             startTop            : 20,
             startRight          : 10,
             verticalSpacing     : 20,
             horizontalSpacing   : 20,
-            positionX           : 'left',
-            positionY           : 'bottom'
+            positionX           : 'right',
+            positionY           : 'top'
         });
     });
 

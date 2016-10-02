@@ -38,6 +38,7 @@ module.exports = {
 		"common/services/currency-converter.js",
 		
 		// Common directives
+		"common/directives/back.js",
 	  
 		// Common factories
 		"common/factories/init.js",

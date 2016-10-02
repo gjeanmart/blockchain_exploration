@@ -6,19 +6,19 @@
      ******************************************/
     angular.module('PotChain').controller('potCreateController', potCreateController);
     
-    potCreateController.$inject  = ['$scope', '$rootScope', '$log', '$state', 'init', 'CURRENCIES', 'PotRegistryContractService', 'currencyConverterService'];
+    potCreateController.$inject  = ['$scope', '$rootScope', '$log', '$state', 'init', 'CURRENCIES', 'PotRegistryContractService', 'currencyConverterService', 'Notification', 'commonService'];
 
-    function potCreateController ($scope, $rootScope, $log, $state, init, CURRENCIES, PotRegistryContractService, currencyConverterService) {
+    function potCreateController ($scope, $rootScope, $log, $state, init, CURRENCIES, PotRegistryContractService, currencyConverterService, Notification, commonService) {
 
 	    var crtl = this;
 	
         $scope.initialize = function() {
-            $log.debug("[pot-create-controller.js - initialize()] (START) controller 'potCreateController'");
+            commonService.log.debug("pot-create-controller.js", "initialize()", "START");
         
 			$scope.pot = {};
 		
             init.then(function(account) {
-                $log.debug("[pot-create-controller.js - initialize()] (DEBUG) account="+account.address);
+				commonService.log.debug("pot-create-controller.js", "initialize()", "DEBUG","account="+account.address);
 				
 				if($rootScope.account.balanceDisplayed === undefined) {
 					$scope.currency = CURRENCIES[0];	
@@ -29,44 +29,46 @@
         };
 
 		$scope.selectCurrency = function(currency) {
-			$log.debug("[pot-create-controller.js - selectCurrency(currency="+currency+")] (START)");
+            commonService.log.debug("pot-create-controller.js", "selectCurrency(currency="+currency+")", "START");
 			
 			$scope.currency = currency;
 			
 			$scope.calculateAmountEther(currency);
 			
-			$log.debug("[pot-create-controller.js - selectCurrency(currency="+currency+")] (END)");
+            commonService.log.debug("pot-create-controller.js", "selectCurrency(currency="+currency+")", "END");
 		};
 		
-		$scope.calculateAmountEther = function(currency) {
-			$log.debug("[pot-create-controller.js - calculateAmountEther(currency="+currency+")] (START)");
+		$scope.calculateAmountEther = function(currency) {          
+			commonService.log.debug("pot-create-controller.js", "calculateAmountEther(currency="+currency+")", "START");
 			
 			if(CURRENCIES[0].id != $scope.currency.id) {
 				currencyConverterService.convert($scope.currency.id, CURRENCIES[0].id, $scope.pot.goal).then(function (result) {
 					$scope.pot.goalEther = result;
 
-					$log.debug("[pot-create-controller.js - calculateAmountEther(currency="+currency+")] (END) goal(eth)="+$scope.pot.goalEther);
+					commonService.log.debug("pot-create-controller.js", "calculateAmountEther(currency="+currency+")", "END", "goal(eth)="+$scope.pot.goalEther);
 				});
 				
 			} else {
 				$scope.pot.goalEther = $scope.pot.goal;
-				$log.debug("[pot-create-controller.js - calculateAmountEther(currency="+currency+")] (END) goal(eth)="+$scope.pot.goalEther);
+				
+				commonService.log.debug("pot-create-controller.js", "calculateAmountEther(currency="+currency+")", "END", "goal(eth)="+$scope.pot.goalEther);
 			}		
 		};
 		
 		$scope.createPot = function() {
-			$log.debug("[pot-create-controller.js - createPot()] (START)");
+			commonService.log.debug("pot-create-controller.js", "createPot()", "START");
+			
+			if ($scope.form.$valid) {			
+				PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(transaction) {			
+					commonService.log.debug("pot-create-controller.js", "createPot()", "END", "transaction="+transaction);
 
-			if ($scope.form.$valid) {
-
-				PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther).then(function(transaction) {		
-					$log.debug("[pot-create-controller.js - createPot()] (END): transaction="+transaction);
-
+					Notification.primary({message: "Creating pot ... <a type='button' class='btn btn-info' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});
+					
 					$state.go('pot-list');
 					
 				}, function(error) {
-					$log.error("[pot-create-controller.js - createPot()] (ERROR): error="+error);
-
+					commonService.log.error("pot-create-controller.js", "createPot()", "END", "error="+error);
+					Notification.error({message: error.message.substr(0, 250), replaceMessage: true});
 				});
 				
 			} else {

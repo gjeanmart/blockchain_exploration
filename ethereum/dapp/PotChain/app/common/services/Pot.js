@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').service('PotContractService', PotContractService);
 	
-    PotContractService.$inject  = ['$log', '$q', '$filter'];
+    PotContractService.$inject  = ['$log', '$q', '$filter', 'commonService'];
 
-    function PotContractService ($log, $q, $filter) {
+    function PotContractService ($log, $q, $filter, commonService) {
 		var service = this;
 		
 		service.getContract = function(contractAddress) {
@@ -16,7 +16,7 @@
 		};
 		
 		service.getPot	 = function(contractAddress, senderAddress) {
-			$log.debug($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")] (START)");
+			commonService.log.debug("Pot.js", "getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "START");
 			
 			return $q(function(resolve, reject) 	{
 				service.getContract(contractAddress).getDetails.call({from: senderAddress}).then(function(result) {
@@ -30,35 +30,38 @@
 						owner		: result[0],
 						name		: web3.toAscii(result[1]),
 						description	: web3.toAscii(result[2]),
-						total		: result[3].toNumber(),
+						total		: Number(web3.fromWei(result[3].toNumber(), "ether")),
 						startDate	: new Date(result[4].toNumber() * 1000),
 						endDate		: new Date(result[5].toNumber() * 1000),
-						goal		: result[6].toNumber(),
+						goal		: Number(web3.fromWei(result[6].toNumber(), "ether")),
 						recipient	: result[7],
 						endded		: result[8]
 					};
 					
-					$log.debug($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")] (END) name = " + pot.name);
+					commonService.log.debug("Pot.js", "getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "name = " + pot.name);
 					
 					resolve(pot);
 					
 				}, function(error) {
-					$log.error($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")] (ERROR) error="+error);
+					commonService.log.error("Pot.js", "getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "error="+error);
+					
 					reject(error);
 				});
 			});
 		};
 		
-		service.sendMessage	 = function(contractAddress, username, message, senderAddress) {
-			$log.debug($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")] (START)");
-		
+		service.sendMessage	 = function(contractAddress, username, message, senderAddress) {			
+			commonService.log.debug("Pot.js", "sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")", "START");
+					
 			return $q(function(resolve, reject) 	{
 				service.getContract(contractAddress).sendMessage(username, message, {from: senderAddress}).then(function(transaction) {
-					$log.debug($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")] (END) transaction="+transaction);
+					commonService.log.debug("Pot.js", "sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")", "END", "transaction="+transaction);
+					
 					resolve(transaction);
 					
 				}, function(error) {
-					$log.error($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")] (ERROR) error="+error);
+					commonService.log.error("Pot.js", "sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")", "END", "error="+error);
+					
 					reject(error);
 				});
 			});
@@ -66,7 +69,7 @@
 		};
 		
 		service.getMessages = function (contractAddress, pageNo, pageSize, senderAddress) {
-			$log.debug($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")] (START)");
+			commonService.log.debug("Pot.js", "getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "START");
 			
 			return $q(function(resolve, reject) 	{
 				service.getContract(contractAddress).getMessages.call(pageNo, pageSize, {from: senderAddress}).then(function(result) {
@@ -84,14 +87,69 @@
 						messages.push(message);
 					}
 					
-					$log.debug($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")]  (END) nb result=" + messages.length);
+					commonService.log.debug("Pot.js", "getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "END", "nb result=" + messages.length);
+					
 					resolve({
 						data : messages,
 						total: result[4].toNumber()
 					});
 					
 				}, function(error) {
-					$log.error($filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss') + " [Pot.js / getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")] (ERROR) error="+error);
+					commonService.log.error("Pot.js", "getMessages(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "END", "error="+error);
+					
+					reject(error);
+				});
+			});
+		};
+		
+		service.sendContribution = function(contractAddress, username, message, senderAddress, amount) {			
+			commonService.log.debug("Pot.js", "sendContribution(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "START");
+					
+			return $q(function(resolve, reject) 	{
+				service.getContract(contractAddress).contribute(username, message, {from: senderAddress, value: web3.toWei(amount, "ether")}).then(function(transaction) {
+					commonService.log.debug("Pot.js", "sendContribution(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "END", "transaction="+transaction);
+					
+					resolve(transaction);
+					
+				}, function(error) {
+					commonService.log.error("Pot.js", "sendContribution(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "END", "error="+error);
+					
+					reject(error);
+				});
+			});
+
+		};
+		
+		service.getContributions = function (contractAddress, pageNo, pageSize, senderAddress) {
+			commonService.log.debug("Pot.js", "getContributions(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "START");
+			
+			return $q(function(resolve, reject) 	{
+				service.getContract(contractAddress).getContributions.call({from: senderAddress}).then(function(result) {
+					$log.debug(result);
+					
+					var contributions = [];
+					
+					for(var i = 0; i < result[0].length; i++) {
+						var contribution = {
+							sender		: result[0][i],
+							amount		: Number(web3.fromWei(result[1][i], "ether")),
+							username	: web3.toAscii(result[2][i]),
+							message		: web3.toAscii(result[3][i]),
+							date		: new Date(result[4][i].toNumber() * 1000)
+						};
+						contributions.push(contribution);
+					}
+					
+					commonService.log.debug("Pot.js", "getContributions(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "END", "nb result=" + contributions.length);
+					
+					resolve({
+						data : contributions,
+						total: result[5].toNumber()
+					});
+					
+				}, function(error) {
+					commonService.log.error("Pot.js", "getContributions(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "END", "error="+error);
+					
 					reject(error);
 				});
 			});

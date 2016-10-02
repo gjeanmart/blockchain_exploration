@@ -6,29 +6,30 @@
      ******************************************/
     angular.module('PotChain').service('PotRegistryContractService', PotRegistryContractService);
 	
-    PotRegistryContractService.$inject  = ['$log', '$q'];
+    PotRegistryContractService.$inject  = ['$log', '$q','commonService'];
 
-    function PotRegistryContractService ($log, $q) {
+    function PotRegistryContractService ($log, $q, commonService) {
 		var service = this;
-    
+
         service.contract = PotRegistry.deployed();
 	
-		service.createPot = function (address, name, description, endDate, goal) {
-			$log.debug("[PotRegistry.js / createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+")] (START)");
+		service.createPot = function (address, name, description, endDate, goal, recipient) {
+			commonService.log.debug("PotRegistry.js", "createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+", recipient="+recipient+")", "START");
 			
 			return $q(function(resolve, reject) 	{
-				service.contract.createPot(name, description, endDate / 1000, goal, {from: address}).then(function(transaction) {
-					$log.debug("[PotRegistry.js / createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+")] (END) transaction="+transaction);
+				service.contract.createPot(name, description, endDate / 1000, web3.toWei(goal, "ether"), recipient, {from: address}).then(function(transaction) {
+					commonService.log.debug("PotRegistry.js", "createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+", recipient="+recipient+")", "END", "transaction="+transaction);
+					
 					resolve(transaction);
 				}, function(error) {
-					$log.error("[PotRegistry.js / createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+")] (ERROR) error="+error);
+					commonService.log.error("PotRegistry.js", "createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+", recipient="+recipient+")", "END", "error="+error);
 					reject(error);
 				});
 			});
 		};
 	
 		service.getPots = function (address, pageNo, pageSize) {
-			$log.debug("[PotRegistry.js / getPots(address="+address+", pageNo="+pageNo+", pageSize="+pageSize+")] (START)");
+			commonService.log.debug("PotRegistry.js", "getPots(address="+address+", pageNo="+pageNo+", pageSize="+pageSize+")", "START");
 			
 			return $q(function(resolve, reject) 	{
 				service.contract.getPots.call(pageNo, pageSize, {from: address}).then(function(result) {
@@ -45,14 +46,14 @@
 						pots.push(pot);
 					}
 					
-					$log.debug("[PotRegistry.js / getPots(address="+address+", pageNo="+pageNo+", pageSize="+pageSize+")] (END) nb result=" + pots.length);
+					commonService.log.debug("PotRegistry.js", "getPots(address="+address+", pageNo="+pageNo+", pageSize="+pageSize+")", "END", "nb result=" + pots.length);
 					resolve({
 						data : pots,
 						total: result[3].toNumber()
 					});
 					
 				}, function(error) {
-					$log.error("[PotRegistry.js / getPots(address="+address+", pageNo="+pageNo+", pageSize="+pageSize+")] (ERROR) error="+error);
+					commonService.log.error("PotRegistry.js", "getPots(address="+address+", pageNo="+pageNo+", pageSize="+pageSize+")", "END", "error="+error);
 					reject(error);
 				});
 			});

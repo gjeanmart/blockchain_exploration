@@ -6,64 +6,68 @@
      ******************************************/
     angular.module('PotChain').controller('potDetailsController', potDetailsController);
     
-    potDetailsController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$stateParams', 'init', 'PotContractService'];
+    potDetailsController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$stateParams', 'init', 'PotContractService', 'currencyConverterService', 'CURRENCIES', 'Notification', 'commonService'];
 
-    function potDetailsController ($scope, $rootScope, $log, $state, $stateParams, init, PotContractService) {
+    function potDetailsController ($scope, $rootScope, $log, $state, $stateParams, init, PotContractService, currencyConverterService, CURRENCIES, Notification, commonService) {
 	
         $scope.initialize = function() {
-            $log.debug("[pot-details-controller.js - initialize()] (START) controller 'potDetailsController'");
+           commonService.log.debug("pot-details-controller.js", "initialize()", "START");
         
             init.then(function(account) {
-                $log.debug("[pot-details-controller.js - initialize()] (DEBUG) account="+account.address);
-			
+                commonService.log.debug("pot-details-controller.js", "initialize()", "DEBUG", "account="+account.address);
+				
+				if($rootScope.account.balanceDisplayed === undefined) {
+					$scope.currency = CURRENCIES[0];	
+				} else {
+					$scope.currency = $rootScope.account.balanceDisplayed.currency;
+				}
+				
 				$scope.address = $stateParams.address;
-				$scope.message = {
-					username: account.address
-				};
 				
 				$scope.getDetails();
-				$scope.getMessages(1, 20);
+				$scope.getContributions(1, 20);
 			});
         };
 		
 		$scope.getDetails = function() {
-			$log.debug("[pot-details-controller.js - getDetails()] (START)");
+			commonService.log.debug("pot-details-controller.js", "getDetails()", "START");
 			
 			PotContractService.getPot($scope.address).then(function (result) {
 				$scope.pot = result;
-				
-				$log.debug("[pot-details-controller.js - getDetails()] (END) name="+$scope.pot.name);
+		
+				commonService.log.debug("pot-details-controller.js", "getDetails()", "END", "name="+$scope.pot.name);
 				
 			}, function (error) {
-				$log.error("[pot-details-controller.js - getDetails()] (ERROR) error="+error);
+				commonService.log.error("pot-details-controller.js", "getDetails()", "END", "error="+error);
 			});
 		};
 		
-		$scope.getMessages = function(page, size) {
-			$log.debug("[pot-details-controller.js - getMessages()] (START)");
+		$scope.getContributions = function(page, size) {
+			commonService.log.debug("pot-details-controller.js", "getContributions(page="+page+", size="+size+")", "START");
 			
-			PotContractService.getMessages($scope.address, page, size).then(function (result) {
-				$scope.messages = result.data;
-				$log.debug("[pot-details-controller.js - getMessages()] (END)");
+			PotContractService.getContributions($scope.address, page, size).then(function (result) {
+				$scope.contributions = result.data;
+				
+				commonService.log.debug("pot-details-controller.js", "getContributions(page="+page+", size="+size+")", "END", "Nb Contributions:"+result.total);
 				
 			}, function (error) {
-				$log.error("[pot-details-controller.js - getMessages()] (ERROR) error="+error);
+				commonService.log.error("pot-details-controller.js", "getContributions(page="+page+", size="+size+")", "END", "error="+error);
 			});
 		};
 		
-		$scope.sendMessage = function() {
-			$log.debug("[pot-details-controller.js - sendMessage()] (START)");
-
+		$scope.sendContribution = function() {
+			commonService.log.debug("pot-details-controller.js", "sendContribution()", "START");
+			
 			if ($scope.form.$valid) {
 
-				PotContractService.sendMessage($scope.address, $scope.message.username, $scope.message.text, $rootScope.account.address).then(function(transaction) {		
-					$log.debug("[pot-details-controller.js - sendMessage()] (END): transaction="+transaction);
-
-					$scope.getMessages(1, 20);
+				PotContractService.sendContribution($scope.address, $scope.contribution.username, $scope.contribution.message, $rootScope.account.address, $scope.contribution.amountEther).then(function(transaction) {		
+					$scope.getContributions(1, 20);
+					$scope.contribution = null;
+					
+					commonService.log.debug("pot-details-controller.js", "sendContribution()", "END", "transaction="+transaction);
 					
 				}, function(error) {
-					$log.error("[pot-details-controller.js - sendMessage()](ERROR): error="+error);
-
+					commonService.log.error("pot-details-controller.js", "sendContribution()", "END", "error="+error);
 				});
 				
 			} else {
@@ -71,6 +75,32 @@
 			}
 		};
 
+		$scope.selectCurrency = function(currency) {
+			commonService.log.debug("pot-details-controller.js", "selectCurrency(currency="+currency+")", "START");
+			
+			$scope.currency = currency;
+			
+			$scope.calculateAmountEther(currency);
+			
+			commonService.log.debug("pot-details-controller.js", "selectCurrency(currency="+currency+")", "END");
+		};
+		
+		$scope.calculateAmountEther = function(currency) {
+			commonService.log.debug("pot-details-controller.js", "calculateAmountEther(currency="+currency+")", "START");
+
+			if(CURRENCIES[0].id != $scope.currency.id) {
+				currencyConverterService.convert($scope.currency.id, CURRENCIES[0].id, $scope.contribution.amount).then(function (result) {
+					$scope.contribution.amountEther = result;
+					
+					commonService.log.debug("pot-details-controller.js", "calculateAmountEther(currency="+currency+")", "END", "amount(eth)="+$scope.contribution.amountEther);
+				});
+				
+			} else {
+				$scope.contribution.amountEther = $scope.contribution.amount;
+				
+				commonService.log.debug("pot-details-controller.js", "calculateAmountEther(currency="+currency+")", "END", "amount(eth)="+$scope.contribution.amountEther);
+			}		
+		};
 
         // INIT
         $scope.initialize();
