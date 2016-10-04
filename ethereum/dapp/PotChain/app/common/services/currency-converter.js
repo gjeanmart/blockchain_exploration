@@ -6,15 +6,15 @@
      ******************************************/
     angular.module('PotChain').service('currencyConverterService', currencyConverterService);
     
-    currencyConverterService.$inject  = ['$log', '$http'];
+    currencyConverterService.$inject  = ['$log', '$http', 'commonService'];
 
-    function currencyConverterService ($log, $http) {
+    function currencyConverterService ($log, $http, commonService) {
         var service = this;
         
         service.api= 'https://www.cryptonator.com/api/ticker/%s-%s';
     
         service.convert = function (from, to, value) {
-            $log.debug("[currency-converter.js / convert(from="+from+", to="+to+", value="+value+")] (START)");
+            commonService.log.debug("currency-converter.js", "convert(from="+from+", to="+to+", value="+value+")", "START");
             
             return $http({
               method    : 'GET',
@@ -23,12 +23,12 @@
                 var rate = response.data.ticker.price;
                 var result = value * rate;
                 
-                $log.debug("[currency-converter.js / convert(from="+from+", to="+to+", value="+value+")] (END) result="+result);
+                commonService.log.debug("currency-converter.js", "convert(from="+from+", to="+to+", value="+value+")", "END", "result="+result);
                 
                 return result;
                 
             }, function(error) {
-                $log.error("[currency-converter.js / convert(from="+from+", to="+to+", value="+value+")] (ERROR) error="+error);
+                commonService.log.error("currency-converter.js", "convert(from="+from+", to="+to+", value="+value+")", "END", "error="+error);
             });
 
         };
