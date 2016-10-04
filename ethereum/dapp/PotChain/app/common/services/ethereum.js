@@ -119,6 +119,26 @@
             });
             
         };
+
+		/**
+		 * Checks if the given string is an address
+		 *
+		 * @method isAddress
+		 * @param {String} address the given HEX adress
+		 * @return {Boolean}
+		 * @source http://ethereum.stackexchange.com/questions/1374/how-can-i-check-if-an-ethereum-address-is-valid
+		*/
+		service.validateAddress = function(address) {
+			commonService.log.debug("ethereum.js", "validateAddress(address="+address+")", "START");
+
+			if (!/^(0x)?[0-9a-f]{40}$/i.test(address.toLowerCase())) {
+				// check if it has the basic requirements of an address
+				return false;
+			} else {
+				return true;
+			}
+		};
+		
     }
     
 })();

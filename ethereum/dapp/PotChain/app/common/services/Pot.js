@@ -155,6 +155,24 @@
             });
         };
         
+        service.withdraw = function(contractAddress, senderAddress) {            
+            commonService.log.debug("Pot.js", "withdraw(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "START");
+                    
+            return $q(function(resolve, reject)     {
+                service.getContract(contractAddress).withdraw({from: senderAddress}).then(function(transaction) {
+                    commonService.log.debug("Pot.js", "withdraw(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "transaction="+transaction);
+                    
+                    resolve(transaction);
+                    
+                }, function(error) {
+                    commonService.log.error("Pot.js", "withdraw(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "error="+error);
+                    
+                    reject(error);
+                });
+            });
+
+        };
+        
     }
     
 })();

@@ -33,7 +33,15 @@
 
 							</div>
 						</li>
-					</ul>
+						<li class="list-group-item" ng-if="pot.recipient == account.address">
+							<button type="button" 
+									ng-class="(pot.total >= pot.goal || pot.endDate < today) ? 'active' : 'disabled'"
+									class="btn btn-primary"
+									ng-click="withdraw()">
+								Withdraw
+							</button>
+						</li>
+					</ul> 
 				</div>
 			</div>
 		</div>

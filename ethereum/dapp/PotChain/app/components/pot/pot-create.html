@@ -48,7 +48,7 @@
 						placeholder="" 
 						ng-model="pot.recipient"
 						autocomplete="off"			
-						ng-maxlength="50"
+						eth-address
 						required />
 								
 					<p class="help-block" ng-if="form.recipient.$error.required">Required</p>
@@ -66,7 +66,7 @@
 								placeholder="{{datePicker.formatLabel}}" 
 								ng-model="pot.endDate" 
 								uib-datepicker-popup="{{datePicker.format}}"
-								datepicker-options="datePicker.datePickerDefaultOptionNoPast" 
+								datepicker-options="datePicker.datePickerDefaultOption" 
 								is-open="datePicker.instances['create-pot-endDate']"  
 								close-text="Close" 
 								required />

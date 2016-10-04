@@ -68,6 +68,7 @@
         });
                 
         // Constants
+        $rootScope.today = new Date();
         $rootScope.currencies = CURRENCIES;
         $rootScope.VERSION = VERSION;
         $rootScope.PAGE_SIZE_DEFAULT = PAGE_SIZE_DEFAULT;

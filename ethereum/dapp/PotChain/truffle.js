@@ -22,7 +22,8 @@ module.exports = {
 		"assets/libs/bower_components/web3/dist/web3.min.js",
 		"assets/libs/bower_components/sprintf/dist/angular-sprintf.min.js",
 		"assets/libs/bower_components/sprintf/dist/sprintf.min.js",
-		"assets/libs/bower_components/ng-table/dist/ng-table.min.js"
+		"assets/libs/bower_components/ng-table/dist/ng-table.min.js",
+		"assets/libs/bower_components/js-sha3/build/sha3.min.js"
     ],
     "app.js"	: [
 		"app.js",
@@ -39,6 +40,7 @@ module.exports = {
 		
 		// Common directives
 		"common/directives/back.js",
+		"common/directives/ethAddress.js",
 	  
 		// Common factories
 		"common/factories/init.js",

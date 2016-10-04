@@ -46,7 +46,9 @@ contract Pot is Killable {
      * Modifier    
      */
     modifier isActive {
-        if(endDate > now && ended == false) {
+        // TODO REMOVE COMMENT :trick to test the withdrawal
+		//if(endDate > now && ended == false) {
+		if(ended == false) {
             _
         }
     }

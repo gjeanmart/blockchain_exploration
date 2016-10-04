@@ -60,7 +60,10 @@
             
             if ($scope.form.$valid) {
 
-                PotContractService.sendContribution($scope.address, $scope.contribution.username, $scope.contribution.message, $rootScope.account.address, $scope.contribution.amountEther).then(function(transaction) {        
+                PotContractService.sendContribution($scope.address, $scope.contribution.username, $scope.contribution.message, $rootScope.account.address, $scope.contribution.amountEther).then(function(transaction) {   
+					Notification.primary({message: "Transaction <a type='button' class='btn btn-link' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});   
+					
+					$scope.getDetails();
                     $scope.getContributions(1, 20);
                     $scope.contribution = null;
                     
@@ -68,11 +71,29 @@
                     
                 }, function(error) {
                     commonService.log.error("pot-details-controller.js", "sendContribution()", "END", "error="+error);
+                    Notification.error({message: error.message.substr(0, 250), replaceMessage: true});
                 });
                 
             } else {
                 $scope.$broadcast('show-errors-check-validity');
             }
+        };
+		
+        $scope.withdraw = function() {
+            commonService.log.debug("pot-details-controller.js", "withdraw()", "START");
+            
+            PotContractService.withdraw($scope.address, $rootScope.account.address).then(function(transaction) {   
+			Notification.primary({message: "Transaction <a type='button' class='btn btn-link' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});   
+					
+					
+			$scope.getDetails();
+                    
+			commonService.log.debug("pot-details-controller.js", "withdraw()", "END", "transaction="+transaction);
+                    
+			}, function(error) {
+				commonService.log.error("pot-details-controller.js", "withdraw()", "END", "error="+error);
+				Notification.error({message: error.message.substr(0, 250), replaceMessage: true});
+			});
         };
 
         $scope.selectCurrency = function(currency) {

@@ -62,7 +62,7 @@
                 PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(transaction) {            
                     commonService.log.debug("pot-create-controller.js", "createPot()", "END", "transaction="+transaction);
 
-                    Notification.primary({message: "Creating pot ... <a type='button' class='btn btn-info' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});
+                    Notification.primary({message: "Transaction <a type='button' class='btn btn-link' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});
                     
                     $state.go('pot-list');
                     
