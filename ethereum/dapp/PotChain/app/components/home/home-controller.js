@@ -11,10 +11,10 @@
     function homeController ($rootScope, $scope, $log, $state, init, commonService) {
 
         $scope.initialize = function() {
-			commonService.log.debug("home-controller.js", "initialize()", "START", "controller 'homeController'");
+            commonService.log.debug("home-controller.js", "initialize()", "START", "controller 'homeController'");
         
             init.then(function(account) {
-				commonService.log.debug("home-controller.js", "initialize()", "DEBUG", "account="+account.address);
+                commonService.log.debug("home-controller.js", "initialize()", "DEBUG", "account="+account.address);
             });
         };
 
