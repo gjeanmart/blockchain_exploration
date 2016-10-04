@@ -6,7 +6,7 @@
      ******************************************/
     angular.module('PotChain').factory('init', init);
     
-    init.$inject  = ['$log', '$q', '$state', 'RPC_URL', 'CURRENCIES', '$rootScope', 'ethereumService', 'commonService];
+    init.$inject  = ['$log', '$q', '$state', 'RPC_URL', 'CURRENCIES', '$rootScope', 'ethereumService', 'commonService'];
 
     function init ($log, $q, $state, RPC_URL, CURRENCIES, $rootScope, ethereumService, commonService) {
         

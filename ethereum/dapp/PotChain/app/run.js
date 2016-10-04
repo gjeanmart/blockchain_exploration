@@ -5,7 +5,7 @@
      **** run.js
      ******************************************/
     angular.module('PotChain')
-    .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'currencyConverterService', 'commonService'
+    .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'currencyConverterService', 'commonService',
     function($rootScope, $log, $filter, $state, VERSION, CURRENCIES, PAGE_SIZE_DEFAULT, DATE_FORMAT, currencyConverterService, commonService) {
         commonService.log.debug("run.js", "run()", "START", "Starting module 'PotChain'");
         

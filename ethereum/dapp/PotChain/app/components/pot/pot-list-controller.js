@@ -6,15 +6,15 @@
      ******************************************/
     angular.module('PotChain').controller('potListController', potListController);
     
-    potListController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$filter', 'NgTableParams', 'init', 'PotRegistryContractService'];
+    potListController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$filter', 'NgTableParams', 'init', 'PotRegistryContractService', 'commonService'];
 
-    function potListController ($scope, $rootScope, $log, $state, $filter, NgTableParams, init, PotRegistryContractService) {
+    function potListController ($scope, $rootScope, $log, $state, $filter, NgTableParams, init, PotRegistryContractService, commonService) {
 	
         $scope.initialize = function() {
-            $log.debug("[pot-list-controller.js - initialize()] (START) controller 'potListController'");
+           commonService.log.debug("pot-list-controller.js", "initialize()", "START");
         
             init.then(function(account) {
-                $log.debug("[pot-list-controller.js - initialize()] (DEBUG) account="+account.address);
+				commonService.log.debug("pot-list-controller.js", "initialize()", "DEBUG", " account="+account.address);
             
 				$scope.load();
 			});
@@ -28,15 +28,14 @@
 				total: 0,
 				getData: function(params) { 
 					return PotRegistryContractService.getPots($rootScope.account.address, params.page(), params.count()).then(function (result) {
-					   $log.debug(result);
-					   $log.debug("[pot-list-controller.js - load()] (END)");
+						commonService.log.debug("pot-list-controller.js", "load()", "END", "total="+result.total);
 			
 						params.total(result.total);
 						console.log(result.data);
 						return result.data;
 
 					}, function (error) {
-						$log.debug("[pot-list-controller.js - load()] (ERROR) error="+error);
+						commonService.log.error("pot-list-controller.js", "load()", "END", "error="+error);
 					});
 				}
 			});	
