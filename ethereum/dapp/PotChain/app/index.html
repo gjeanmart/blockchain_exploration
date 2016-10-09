@@ -55,6 +55,11 @@
 								class="form-control"
 								value="{{ account.balanceDisplayed.amount | number : 5 }}"
 								ng-readonly="true" />
+								
+						
+						<span class="input-group-addon">
+								<span class="glyphicon glyphicon-refresh" style="cursor:pointer" ng-click="reloadBalance()"></span>
+						</span>
 					</div>
 				</div>
 			</div>

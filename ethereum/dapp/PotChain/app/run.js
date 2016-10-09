@@ -5,13 +5,34 @@
      **** run.js
      ******************************************/
     angular.module('PotChain')
-    .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'currencyConverterService', 'commonService',
-    function($rootScope, $log, $filter, $state, VERSION, CURRENCIES, PAGE_SIZE_DEFAULT, DATE_FORMAT, currencyConverterService, commonService) {
+    .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'ETHERSCAN_URL', 'currencyConverterService', 'commonService', 'ethereumService', 
+    function($rootScope, $log, $filter, $state, VERSION, CURRENCIES, PAGE_SIZE_DEFAULT, DATE_FORMAT, ETHERSCAN_URL, currencyConverterService, commonService, ethereumService) {
         commonService.log.debug("run.js", "run()", "START", "Starting module 'PotChain'");
         
+		// Reload balance
+		$rootScope.reloadBalance = function() {
+			commonService.log.debug("run.js", "getBalance()", "START");
+			
+			ethereumService.getBalance($rootScope.account.address).then(function(balance) {
+				
+				$rootScope.account.balance = balance;
+				
+				if($rootScope.account.balanceDisplayed === undefined) {
+					$rootScope.account.balanceDisplayed = {
+						currency: CURRENCIES[0],
+						amount  : balance
+					};
+				} else {
+					$rootScope.convertBalance($rootScope.account.balanceDisplayed.currency);
+				};
+				
+				commonService.log.debug("run.js", "getBalance()", "END", "getBalance="+balance);
+			});			
+		};
+		
         // Convert currency
         $rootScope.convertBalance = function(currency) {
-        commonService.log.debug("run.js", "convertBalance(currency="+currency.id+")", "START");
+			commonService.log.debug("run.js", "convertBalance(currency="+currency.id+")", "START");
             
             if(CURRENCIES[0].id != currency.id) {
                 currencyConverterService.convert(CURRENCIES[0].id, currency.id, $rootScope.account.balance).then(function (result) {
@@ -73,6 +94,7 @@
         $rootScope.VERSION = VERSION;
         $rootScope.PAGE_SIZE_DEFAULT = PAGE_SIZE_DEFAULT;
         $rootScope.DATE_FORMAT = DATE_FORMAT;
+		$rootScope.ETHERSCAN_URL = ETHERSCAN_URL;
     }]);
 
 })();

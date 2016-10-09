@@ -188,6 +188,7 @@ contract Pot is Killable {
         Withdraw(msg.sender, total);
         
         total = 0;
+		ended = true;
         
         return true;
     }

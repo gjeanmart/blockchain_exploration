@@ -13,6 +13,7 @@
     .constant('DATE_FORMAT'         , 'dd/MM/yyyy')
     .constant('PAGE_SIZE_DEFAULT'   , 10)
     .constant('TIPS_ADDRESS'        , '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
+    .constant('ETHERSCAN_URL'       , 'https://testnet.etherscan.io/')
     .constant('NETWORKS'            , [ {
                                             id      : 1,
                                             name    : 'LIVE'

@@ -57,15 +57,17 @@
         
         $scope.sendContribution = function() {
             commonService.log.debug("pot-details-controller.js", "sendContribution()", "START");
-            
+          
             if ($scope.form.$valid) {
-
+				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
+			
                 PotContractService.sendContribution($scope.address, $scope.contribution.username, $scope.contribution.message, $rootScope.account.address, $scope.contribution.amountEther).then(function(transaction) {   
-					Notification.primary({message: "Transaction <a type='button' class='btn btn-link' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});   
-					
+					Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
+                    
 					$scope.getDetails();
                     $scope.getContributions(1, 20);
                     $scope.contribution = null;
+					$rootScope.reloadBalance();
                     
                     commonService.log.debug("pot-details-controller.js", "sendContribution()", "END", "transaction="+transaction);
                     
@@ -82,13 +84,15 @@
         $scope.withdraw = function() {
             commonService.log.debug("pot-details-controller.js", "withdraw()", "START");
             
+            Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
+			
             PotContractService.withdraw($scope.address, $rootScope.account.address).then(function(transaction) {   
-			Notification.primary({message: "Transaction <a type='button' class='btn btn-link' href='https://testnet.etherscan.io/tx/"+transaction+"' target='_blank'>Info</a>", replaceMessage: true, delay: null});   
-					
-					
-			$scope.getDetails();
+				Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
                     
-			commonService.log.debug("pot-details-controller.js", "withdraw()", "END", "transaction="+transaction);
+				$scope.getDetails();
+				$rootScope.reloadBalance();
+                    
+				commonService.log.debug("pot-details-controller.js", "withdraw()", "END", "transaction="+transaction);
                     
 			}, function(error) {
 				commonService.log.error("pot-details-controller.js", "withdraw()", "END", "error="+error);

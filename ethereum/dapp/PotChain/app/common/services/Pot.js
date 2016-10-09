@@ -35,7 +35,7 @@
                         endDate     : new Date(result[5].toNumber() * 1000),
                         goal        : Number(web3.fromWei(result[6].toNumber(), "ether")),
                         recipient   : result[7],
-                        endded      : result[8]
+                        ended      : result[8]
                     };
                     
                     commonService.log.debug("Pot.js", "getPot(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "name = " + pot.name);
