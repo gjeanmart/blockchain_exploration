@@ -62,7 +62,6 @@ The blocks are stored in **~/.ethereum/testnet/chaindata**
 personal.unlockAccount(eth.coinbase)
 ```
 You can directly unlock your account when you start geth using `--unlock "0x8888888888888888888888888888888888888888"`
-```
 
 The private keys are stored in **~/.ethereum/keystores** (and **~/.ethereum/testnet/keystores**)
 
