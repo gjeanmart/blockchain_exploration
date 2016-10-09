@@ -133,7 +133,7 @@ The configuration is stored in **~/.parity/** .
 
 - Unlock account
 ```
-# parity --unlock "0x8888888888888888888888888888888888888888" --password "path/my/file/containing/the/pw"
+# parity --unlock "0x8888888888888888888888888888888888888888" --password "path/to/the/file/containing/the/pw"
 ```
 	
 The private keys are stored in **~/.parity/keys** (**~/.parity/testnet_keys** for testnet)
@@ -156,5 +156,5 @@ Allow JSONRPC on your node
 ```
 parity --testnet --unlock "0x8888888888888888888888888888888888888888" --password "path/my/file/containing/the/pw" --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts="all"
 ```
-	
+/!\ Be very careful to unlock your first account (in `parity account list`)	
 
