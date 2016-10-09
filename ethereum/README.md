@@ -98,16 +98,63 @@ Check
 # parity --version
 ```
 
+The configuration is stored in **~/.parity/** .
+
+**2.Chain synchronisation**
+- Main network
+```
+# parity
+```
 
 
-**2. Go to workspace**
+- Test network (morden)
+*Just add this argument `--testnet``
 ```
-cd blockchain_exploration/ethereum/dapp/PotChain/
+# parity --testnet 
 ```
 
-**3. Deploy the contracts**
+
+**3. Account management**
+- List accounts
 ```
-truffle migrate --reset --compile-all
-truffle serve --p 8080
+# parity account list 
 ```
+
+- Create an account
+```
+# parity account new 
+```
+
+- Import an account
+```
+# geth account import /dir/to/priv_key.txt [NOT WORKING ...]
+```
+
+
+- Unlock account
+```
+# parity --unlock "0x8888888888888888888888888888888888888888" --password "path/my/file/containing/the/pw"
+```
+	
+The private keys are stored in **~/.parity/keys** (**~/.parity/testnet_keys** for testnet)
+
+
+**3. JSON RPC**
+
+Allow JSONRPC on your node
+```
+# parity --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts="all"
+```
+
+	* `--jsonrpc-apis` api
+	* `--jsonrpc-interface` listenning interface
+	* `--jsonrpc-port` listenning port
+	* `--jsonrpc-cors` IP restrictions
+	* `--jsonrpc-hosts` IP restrictions
+	
+**Summary**
+```
+parity --testnet --unlock "0x8888888888888888888888888888888888888888" --password "path/my/file/containing/the/pw" --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts="all"
+```
+	
 
