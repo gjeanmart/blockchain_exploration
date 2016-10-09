@@ -61,7 +61,7 @@ The blocks are stored in **~/.ethereum/testnet/chaindata**
 ```
 personal.unlockAccount(eth.coinbase)
 ```
-You can directly unlock your account when you start geth using `--unlock "0x8888888888888888888888888888888888888888"
+You can directly unlock your account when you start geth using `--unlock "0x8888888888888888888888888888888888888888"`
 ```
 
 The private keys are stored in **~/.ethereum/keystores** (and **~/.ethereum/testnet/keystores**)
@@ -72,11 +72,11 @@ Allow JSONRPC on your node
 ```
 # geth --rpc --rpcapi "eth,net,web3" --rpccorsdomain '*' --rpcaddr 0.0.0.0 --rpcport 8545 
 ```
-	* --rpc enable
-	* --rpcapi api
-	* --rpcaddr listenning interface
-	* --rpcport listenning port
-	* --rpccorsdomain IP restrictions
+	* `--rpc` enable
+	* `--rpcapi` api
+	* `--rpcaddr` listenning interface
+	* `--rpcport` listenning port
+	* `--rpccorsdomain` IP restrictions
 
 	
 ** Summary**
