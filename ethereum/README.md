@@ -20,7 +20,7 @@ Check
 The configuration is stored in **~/.ethereum/** .
 
 
-** 2.Chain synchronisation**
+**2.Chain synchronisation**
 - Main network
 ```
 # geth --fast --cache=1048 console
@@ -40,6 +40,7 @@ The blocks are stored in **~/.ethereum/testnet/chaindata**
 - List accounts
 ```
 # geth account list 
+```
 
 - Create an account
 ```
