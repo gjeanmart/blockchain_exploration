@@ -99,7 +99,8 @@
                     
                     var networkInfo = {
                         'id'            : result,
-                        'name'          : ($filter('filter')(NETWORKS, {id: result})[0] === undefined) ? result : $filter('filter')(NETWORKS, {id: result})[0].name
+                        'name'          : ($filter('filter')(NETWORKS, {id: result})[0] === undefined) ? result : $filter('filter')(NETWORKS, {id: result})[0].name,
+                        'eherscan'      : ($filter('filter')(NETWORKS, {id: result})[0] === undefined) ? result : $filter('filter')(NETWORKS, {id: result})[0].eherscan
                         //'api'             : web3.version.api,
                         //'ethereum'        : web3.version.ethereum,
                         //'node'            : web3.version.node,

@@ -13,13 +13,14 @@
     .constant('DATE_FORMAT'         , 'dd/MM/yyyy')
     .constant('PAGE_SIZE_DEFAULT'   , 10)
     .constant('TIPS_ADDRESS'        , '0x9eea66Cad10901979AEc87B8010a5D5844D5Ff6a')
-    .constant('ETHERSCAN_URL'       , 'https://testnet.etherscan.io/')
     .constant('NETWORKS'            , [ {
                                             id      : 1,
-                                            name    : 'LIVE'
+                                            name    : 'LIVE',
+                                            eherscan: 'https://etherscan.io/'
                                         }, {
                                             id      : 2,
-                                            name    : 'TEST MORDEN'
+                                            name    : 'TEST MORDEN',
+                                            eherscan: 'https://testnet.etherscan.io/'
                                         }])
     .constant('CURRENCIES'          , [ {
                                             id      : 'ETH',
@@ -55,7 +56,7 @@
     .config(function(NotificationProvider) {
         NotificationProvider.setOptions({
             delay               : 60000,
-            startTop            : 20,
+            startTop            : 60,
             startRight          : 10,
             verticalSpacing     : 20,
             horizontalSpacing   : 20,

@@ -46,14 +46,7 @@ contract Pot is Killable {
      * Modifier    
      */
     modifier isActive {
-        // TODO REMOVE COMMENT :trick to test the withdrawal
-		//if(endDate > now && ended == false) {
-		if(ended == false) {
-            _
-        }
-    }
-    modifier isEnded {
-        if (endDate <= now || ended == true) {
+        if(endDate > now && ended == false) {
             _
         }
     }
@@ -178,8 +171,12 @@ contract Pot is Killable {
         return true;
     }
     
-    function withdraw() isEnded onlyRecipient returns (bool)  {
+    function withdraw() onlyRecipient returns (bool)  {
     
+		if(total < goal) { // TODO check also if the enddate is expired
+            throw;
+        }
+	
         if (!recipient.send(total)) {
             // TODO LOG ERROR
             throw;

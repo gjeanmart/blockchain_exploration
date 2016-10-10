@@ -58,16 +58,18 @@
         $scope.sendContribution = function() {
             commonService.log.debug("pot-details-controller.js", "sendContribution()", "START");
           
-            if ($scope.form.$valid) {
-				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
+            if ($scope.form.$valid && !$scope.pot.ended) {
+				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
 			
                 PotContractService.sendContribution($scope.address, $scope.contribution.username, $scope.contribution.message, $rootScope.account.address, $scope.contribution.amountEther).then(function(transaction) {   
-					Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
+					Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
                     
 					$scope.getDetails();
                     $scope.getContributions(1, 20);
                     $scope.contribution = null;
 					$rootScope.reloadBalance();
+					
+					$scope.$broadcast('show-errors-reset');
                     
                     commonService.log.debug("pot-details-controller.js", "sendContribution()", "END", "transaction="+transaction);
                     
@@ -84,20 +86,25 @@
         $scope.withdraw = function() {
             commonService.log.debug("pot-details-controller.js", "withdraw()", "START");
             
-            Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
-			
-            PotContractService.withdraw($scope.address, $rootScope.account.address).then(function(transaction) {   
-				Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.ETHERSCAN_URL+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
-                    
-				$scope.getDetails();
-				$rootScope.reloadBalance();
-                    
-				commonService.log.debug("pot-details-controller.js", "withdraw()", "END", "transaction="+transaction);
-                    
-			}, function(error) {
-				commonService.log.error("pot-details-controller.js", "withdraw()", "END", "error="+error);
-				Notification.error({message: error.message.substr(0, 250), replaceMessage: true});
-			});
+			if(!$scope.pot.ended) {
+				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
+				
+				PotContractService.withdraw($scope.address, $rootScope.account.address).then(function(transaction) {   
+					Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
+						
+					$scope.getDetails();
+					$rootScope.reloadBalance();
+						
+					commonService.log.debug("pot-details-controller.js", "withdraw()", "END", "transaction="+transaction);
+						
+				}, function(error) {
+					commonService.log.error("pot-details-controller.js", "withdraw()", "END", "error="+error);
+					Notification.error({message: error.message.substr(0, 250), replaceMessage: true});
+				});
+			} else {
+				commonService.log.debug("pot-details-controller.js", "withdraw()", "DEBUG", "Cannot withdraw : pot ended");
+			}
+
         };
 
         $scope.selectCurrency = function(currency) {

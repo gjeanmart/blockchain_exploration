@@ -35,11 +35,22 @@
 						</li>
 						<li class="list-group-item" ng-if="pot.recipient == account.address">
 							<button type="button" 
-									ng-class="((pot.total >= pot.goal || pot.endDate < today)  && pot.ended == false) ? 'active' : 'disabled'"
+									ng-class="(pot.total >= pot.goal || pot.endDate < today) ? 'active' : 'disabled'"
 									class="btn btn-primary"
-									ng-click="withdraw()">
-								Withdraw
+									ng-click="withdraw()"
+									ng-if="!pot.ended">
+								<span class="glyphicon glyphicon-star-empty"> Withdraw</span>
 							</button>
+							<button type="button" 
+									class="btn btn-error"
+									style="cursor:auto"
+									ng-if="pot.ended">
+								<span class="glyphicon glyphicon-minus-sign"> Ended</span>
+							</button>
+							
+							
+							
+							
 						</li>
 					</ul> 
 				</div>
@@ -104,7 +115,7 @@
 						  required></textarea>
 			</div>
 			<br>
-			<button ng-click="sendContribution()" class="btn btn-primary btn-sm pull-right">Send a contribution</button>
+			<button ng-click="sendContribution()" class="btn btn-primary btn-sm pull-right" ng-class="(!pot.ended) ? 'active' : 'disabled'">Send a contribution</button>
 		</form>
 		<div class="clearfix"></div>
 		<hr>

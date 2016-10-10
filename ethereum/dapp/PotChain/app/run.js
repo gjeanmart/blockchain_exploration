@@ -5,8 +5,8 @@
      **** run.js
      ******************************************/
     angular.module('PotChain')
-    .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'ETHERSCAN_URL', 'currencyConverterService', 'commonService', 'ethereumService', 
-    function($rootScope, $log, $filter, $state, VERSION, CURRENCIES, PAGE_SIZE_DEFAULT, DATE_FORMAT, ETHERSCAN_URL, currencyConverterService, commonService, ethereumService) {
+    .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'currencyConverterService', 'commonService', 'ethereumService', 
+    function($rootScope, $log, $filter, $state, VERSION, CURRENCIES, PAGE_SIZE_DEFAULT, DATE_FORMAT, currencyConverterService, commonService, ethereumService) {
         commonService.log.debug("run.js", "run()", "START", "Starting module 'PotChain'");
         
 		// Reload balance
@@ -94,7 +94,6 @@
         $rootScope.VERSION = VERSION;
         $rootScope.PAGE_SIZE_DEFAULT = PAGE_SIZE_DEFAULT;
         $rootScope.DATE_FORMAT = DATE_FORMAT;
-		$rootScope.ETHERSCAN_URL = ETHERSCAN_URL;
     }]);
 
 })();
