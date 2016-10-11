@@ -82,3 +82,13 @@ label {
     font-size: 12px;
 }
 
+.tooltip.customClass .tooltip-inner {
+  color: #880000;
+  background-color: #ffff66;
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+.tooltip-inner {
+    max-width: 320px;
+    /* If max-width does not work, try using width instead */
+    width: 320px; 
+}

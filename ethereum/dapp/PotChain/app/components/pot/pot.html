@@ -33,12 +33,12 @@
 
 							</div>
 						</li>
-						<li class="list-group-item" ng-if="pot.recipient == account.address">
+						<li class="list-group-item">
 							<button type="button" 
-									ng-class="(pot.total >= pot.goal || pot.endDate < today) ? 'active' : 'disabled'"
+									ng-disabled="!(pot.total >= pot.goal || pot.endDate < today)"
 									class="btn btn-primary"
 									ng-click="withdraw()"
-									ng-if="!pot.ended">
+									 ng-if="pot.recipient == account.address && !pot.ended">
 								<span class="glyphicon glyphicon-star-empty"> Withdraw</span>
 							</button>
 							<button type="button" 
@@ -47,10 +47,6 @@
 									ng-if="pot.ended">
 								<span class="glyphicon glyphicon-minus-sign"> Ended</span>
 							</button>
-							
-							
-							
-							
 						</li>
 					</ul> 
 				</div>

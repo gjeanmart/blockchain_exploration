@@ -13,7 +13,8 @@
             'ui-notification', 
             'ui.bootstrap', 
             'ui.bootstrap.showErrors',
-			'ngTable'
+			'ngTable',
+			'angular-clipboard'
         ]
     );
     

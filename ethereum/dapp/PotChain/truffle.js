@@ -17,6 +17,7 @@ module.exports = {
 		"assets/libs/bower_components/angular-ui-router/release/angular-ui-router.min.js",
 		"assets/libs/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
 		"assets/libs/bower_components/angular-bootstrap-show-errors/src/showErrors.min.js",
+		"assets/libs/bower_components/angular-clipboard/angular-clipboard.js",
 		"assets/libs/bower_components/jquery/dist/jquery.min.js",
 		"assets/libs/bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"assets/libs/bower_components/web3/dist/web3.min.js",
