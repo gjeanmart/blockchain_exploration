@@ -57,10 +57,12 @@
         
         $scope.createPot = function() {
             commonService.log.debug("pot-create-controller.js", "createPot()", "START");
-            
-            Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
 					
-            if ($scope.form.$valid) {           
+            if ($scope.form.$valid) {  
+
+
+				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
+			
                 PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(transaction) {            
                     commonService.log.debug("pot-create-controller.js", "createPot()", "END", "transaction="+transaction);
 
