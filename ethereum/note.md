@@ -6,7 +6,7 @@ Install parity (Ubuntu)
 # curl https://sh.rustup.rs -sSf | sh
 # source $HOME/.cargo/env
 # rustc --version
-# > 1.12
+# > min 1.12
 ```
 
 
@@ -17,10 +17,13 @@ Install parity (Ubuntu)
 
 # sudo apt-get update
 # sudo apt-get install cargo
+# cargo --version
+# > min 0.9
 ```
 
 
 3-Install Parity
 ```
 # sudo cargo install --git https://github.com/ethcore/parity.git parity
+# parity --version
 ```
