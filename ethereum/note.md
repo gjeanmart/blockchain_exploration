@@ -6,4 +6,5 @@ Install parity (Ubuntu)
 # dpkg -i cargo_0.9.0-1_amd64.deb
 # sudo apt-get update
 # sudo apt-get install cargo
+# sudo cargo install --git https://github.com/ethcore/parity.git parity
 ```
