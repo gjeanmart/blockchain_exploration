@@ -8,10 +8,10 @@
     .run(['$rootScope', '$log', '$filter', '$state', 'VERSION', 'CURRENCIES', 'PAGE_SIZE_DEFAULT', 'DATE_FORMAT', 'currencyConverterService', 'commonService', 'ethereumService', 
     function($rootScope, $log, $filter, $state, VERSION, CURRENCIES, PAGE_SIZE_DEFAULT, DATE_FORMAT, currencyConverterService, commonService, ethereumService) {
         commonService.log.debug("run.js", "run()", "START", "Starting module 'PotChain'");
-        
+
 		// Reload balance
 		$rootScope.reloadBalance = function() {
-			commonService.log.debug("run.js", "getBalance()", "START");
+			commonService.log.debug("run.js", "reloadBalance()", "START");
 			
 			ethereumService.getBalance($rootScope.account.address).then(function(balance) {
 				
@@ -26,8 +26,20 @@
 					$rootScope.convertBalance($rootScope.account.balanceDisplayed.currency);
 				};
 				
-				commonService.log.debug("run.js", "getBalance()", "END", "getBalance="+balance);
+				commonService.log.debug("run.js", "reloadBalance()", "END", "getBalance="+balance);
 			});			
+		};
+		
+		$rootScope.reloadBlockNumber = function() {
+            // Get Block number
+            ethereumService.getBlockNumber().then(function(blockNumber){
+                commonService.log.debug("run.js", "reloadBlockNumber()", "DEBUG", "blockNumber=" + blockNumber);
+                
+                $rootScope.blockNumber = blockNumber;
+                
+            }, function(error) {
+                commonService.log.error("run.js", "reloadBlockNumber()", "END", "blockNumber/error " + error);
+            });			
 		};
 		
         // Convert currency

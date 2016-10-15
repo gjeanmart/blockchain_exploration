@@ -34,7 +34,14 @@
 					<li ui-sref-active="active"><a ui-sref="pot-list">Pots</a></li>
 				</ul>
 				<div class="pull-right" style="margin-top: 10px;">
-					<button class="btn btn-warning" type="button">{{network.name}}</button>
+					<div class="btn-group">
+						<button class="btn btn-warning" type="button" style="cursor:auto">{{network.name}} - {{blockNumber}}</button>
+						
+						<button class="btn btn-warning" type="button" ng-click="reloadBlockNumber()">
+							<span class="glyphicon glyphicon-refresh" style="cursor:pointer" ng-click="reloadBlockNumber()"></span>
+						</button>
+	
+					</div>
 				</div>
 				<div class="pull-right" style="margin-top: 10px;margin-right:10px;">
 					<button class="btn btn-default" type="button" clipboard text="account.address">
@@ -43,7 +50,7 @@
 					
 				</div>
 				<div class="col-sm-3 col-md-3 pull-right" style="margin-top: 10px;">
-					<div class = "input-group">
+					<div class="input-group">
 						   
 						<div class = "input-group-btn">
 							<button type = "button" class = "btn dropdown-toggle" data-toggle = "dropdown">

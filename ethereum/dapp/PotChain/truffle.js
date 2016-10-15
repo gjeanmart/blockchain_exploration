@@ -6,6 +6,7 @@ module.exports = {
     "views/pot-list.html"	: "components/pot/pot-list.html",
     "views/pot-create.html"	: "components/pot/pot-create.html",
     "views/pot.html"		: "components/pot/pot.html",
+    "views/modal-alert.html": "common/views/modal-alert.html",
 	
 	/* JAVASCRIPT */
     "lib.js": [
@@ -18,6 +19,8 @@ module.exports = {
 		"assets/libs/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js",
 		"assets/libs/bower_components/angular-bootstrap-show-errors/src/showErrors.min.js",
 		"assets/libs/bower_components/angular-clipboard/angular-clipboard.js",
+		//"assets/libs/bower_components/angular-gravatar/build/angular-gravatar.min.js",
+		"assets/libs/angular-gravatar.greg.js",
 		"assets/libs/bower_components/jquery/dist/jquery.min.js",
 		"assets/libs/bower_components/bootstrap/dist/js/bootstrap.min.js",
 		"assets/libs/bower_components/web3/dist/web3.min.js",
@@ -47,6 +50,7 @@ module.exports = {
 		"common/factories/init.js",
 	  
 		// Controllers
+		"common/controller/modal-alert-controller.js",
 		"components/home/home-controller.js",
 		"components/pot/pot-list-controller.js",
 		"components/pot/pot-create-controller.js",

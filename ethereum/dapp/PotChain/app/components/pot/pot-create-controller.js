@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').controller('potCreateController', potCreateController);
     
-    potCreateController.$inject  = ['$scope', '$rootScope', '$log', '$state', 'init', 'CURRENCIES', 'PotRegistryContractService', 'currencyConverterService', 'Notification', 'commonService'];
+    potCreateController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$uibModal', 'init', 'CURRENCIES', 'PotRegistryContractService', 'currencyConverterService', 'Notification', 'commonService'];
 
-    function potCreateController ($scope, $rootScope, $log, $state, init, CURRENCIES, PotRegistryContractService, currencyConverterService, Notification, commonService) {
+    function potCreateController ($scope, $rootScope, $log, $state, $uibModal, init, CURRENCIES, PotRegistryContractService, currencyConverterService, Notification, commonService) {
 
         var crtl = this;
     
@@ -59,8 +59,6 @@
             commonService.log.debug("pot-create-controller.js", "createPot()", "START");
 					
             if ($scope.form.$valid) {  
-
-
 				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
 			
                 PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(transaction) {            
@@ -82,7 +80,39 @@
             }
         };
         
-        
+        $scope.estimateCreatePot = function() {
+            commonService.log.debug("pot-create-controller.js", "estimateCreatePot()", "START");
+					
+            if ($scope.form.$valid) {  
+
+                PotRegistryContractService.createPot.estimate($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(gasEstimation) {            
+                    commonService.log.debug("pot-create-controller.js", "estimateCreatePot()", "END", "gasEstimation="+gasEstimation);
+                    
+					$uibModal.open({
+						templateUrl	: 'views/modal-alert.html',
+						controller	: 'modalAlertController',
+						size		: 'lg',
+						resolve		: {
+							title	: function () {
+								return "Gas estimation";
+							}, 
+							message	: function () {
+								return "This transaction has an gas estimation of " +gasEstimation+ " ether(s)";
+							}
+						}
+					}).result.then(function (result) {
+						$scope.createPot();
+					});
+					
+					
+                }, function(error) {
+                    commonService.log.error("pot-create-controller.js", "estimateCreatePot()", "END", "error="+error);
+                });
+                
+            } else {
+                $scope.$broadcast('show-errors-check-validity');
+            }
+		}
 
         // INIT
         $scope.initialize();

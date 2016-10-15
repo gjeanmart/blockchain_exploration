@@ -40,19 +40,24 @@
 				
 				<div class="form-group col-md-12" show-errors>
 					<label for="recipient">Recipient: *</label>
-					<input 
-						type="text" 
-						class="form-control" 
-						id="recipient" 
-						name="recipient" 
-						placeholder="" 
-						ng-model="pot.recipient"
-						autocomplete="off"			
-						eth-address
-						required />
-								
+					<div class="input-group">
+						<input 
+							type="text" 
+							class="form-control" 
+							id="recipient" 
+							name="recipient" 
+							placeholder="" 
+							ng-model="pot.recipient"
+							autocomplete="off"			
+							eth-address
+							required />
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="pot.recipient = account.address">Copy my address</button>
+						</span>
+					</div>			
 					<p class="help-block" ng-if="form.recipient.$error.required">Required</p>
 					<p class="help-block" ng-if="form.recipient.$invalid && form.recipient.$dirty">Invalid</p>
+					
 				</div>
 				
 			   <div class="form-group col-md-6"  show-errors>
@@ -115,7 +120,16 @@
 				
 				<div class="form-group col-md-12" align="right">
 					<button type="button" class="btn btn-link" back>Cancel</button>
-					<button type="submit" class="btn btn-primary" ng-click="createPot()">Submit</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary" ng-click="createPot()">Submit</button>
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a ng-click="estimateCreatePot()" style="cursor:pointer">Estimate cost</a></li>
+						</ul>
+					</div>
+					
 				</div>
 			</form>	
 		</div>

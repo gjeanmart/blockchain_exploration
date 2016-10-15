@@ -14,7 +14,8 @@
             'ui.bootstrap', 
             'ui.bootstrap.showErrors',
 			'ngTable',
-			'angular-clipboard'
+			'angular-clipboard',
+			'ui.gravatar'
         ]
     );
     

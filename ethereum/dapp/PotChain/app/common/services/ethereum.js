@@ -92,9 +92,9 @@
                 
                 web3.version.getNetwork(function(err, result) {
                     if (err != null) {
-                        commonService.log.error("ethereum.js", "getNetwork()", "END", "There was an error sending a transaction : " + err);
+                        commonService.log.error("ethereum.js", "getNetwork()", "END", "There was an error getting the network : " + err);
                         
-                        reject("There was an error fetching sending your transaction : " + err);
+                        reject("There was an error fetching getting the network : " + err);
                     }
                     
                     var networkInfo = {
@@ -120,7 +120,57 @@
             });
             
         };
+		
 
+        
+        service.getGasPrice = function () {
+            commonService.log.debug("ethereum.js", "getGasPrice()", "START");
+            
+            return $q(function(resolve, reject)     {
+                
+               web3.eth.getGasPrice(function(err, result) {
+                    if (err != null) {
+                        commonService.log.error("ethereum.js", "getGasPrice()", "END", "There was an error getting the gas price : " + err);
+                        
+                        reject("There was an error fetching getting the gas price : " + err);
+                    }
+                    
+                    var gasPrice =  Number(web3.fromWei(result, "ether"));
+
+                    commonService.log.debug("ethereum.js", "getGasPrice()", "END", "gasPrice=" + gasPrice);
+                    
+                    resolve(gasPrice);
+                    
+                });
+                
+            });
+            
+        };
+		
+        service.getBlockNumber = function () {
+            commonService.log.debug("ethereum.js", "getBlockNumber()", "START");
+            
+            return $q(function(resolve, reject)     {
+                
+               web3.eth.getBlockNumber(function(err, result) {
+                    if (err != null) {
+                        commonService.log.error("ethereum.js", "getBlockNumber()", "END", "There was an error getting the blockNumber : " + err);
+                        
+                        reject("There was an error fetching getting the gas price : " + err);
+                    }
+                    
+                    var blockNumber =  Number(result, "ether");
+
+                    commonService.log.debug("ethereum.js", "getBlockNumber()", "END", "blockNumber=" + blockNumber);
+                    
+                    resolve(blockNumber);
+                    
+                });
+                
+            });
+            
+        };
+		
 		/**
 		 * Checks if the given string is an address
 		 *

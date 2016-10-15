@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').service('PotContractService', PotContractService);
     
-    PotContractService.$inject  = ['$log', '$q', '$filter', 'commonService'];
+    PotContractService.$inject  = ['$rootScope', '$log', '$q', '$filter', 'commonService'];
 
-    function PotContractService ($log, $q, $filter, commonService) {
+    function PotContractService ($rootScope, $log, $q, $filter, commonService) {
         var service = this;
         
         service.getContract = function(contractAddress) {
@@ -120,6 +120,27 @@
 
         };
         
+		service.sendContribution.estimate = function (contractAddress, username, message, senderAddress, amount) {
+		
+            commonService.log.debug("Pot.js", "sendContribution.estimate(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "START");
+                    
+            return $q(function(resolve, reject)     {
+                service.getContract(contractAddress).contribute.estimateGas(username, message, {from: senderAddress, value: web3.toWei(amount, "ether")}).then(function(result) {
+					var gasEstimation = $rootScope.gasPrice * Number(result);
+					
+                    commonService.log.debug("Pot.js", "sendContribution.estimate(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "END", "gasEstimation="+gasEstimation);
+                    
+                    resolve(gasEstimation);
+                    
+                }, function(error) {
+                    commonService.log.error("Pot.js", "sendContribution.estimate(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "END", "error="+error);
+                    
+                    reject(error);
+                });
+            });
+
+        };	
+		
         service.getContributions = function (contractAddress, pageNo, pageSize, senderAddress) {
             commonService.log.debug("Pot.js", "getContributions(contractAddress="+contractAddress+", senderAddress="+senderAddress+", pageNo="+pageNo+", pageSize="+pageSize+")", "START");
             
@@ -166,6 +187,28 @@
                     
                 }, function(error) {
                     commonService.log.error("Pot.js", "withdraw(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "error="+error);
+                    
+                    reject(error);
+                });
+            });
+
+        };
+		
+
+        
+        service.withdraw.estimate = function(contractAddress, senderAddress) {            
+            commonService.log.debug("Pot.js", "withdraw.estimate(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "START");
+                    
+            return $q(function(resolve, reject)     {
+                service.getContract(contractAddress).withdraw.estimateGas({from: senderAddress}).then(function(result) {
+					var gasEstimation = $rootScope.gasPrice * Number(result);
+					
+                    commonService.log.debug("Pot.js", "withdraw.estimate(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "gasEstimation="+gasEstimation);
+                    
+                    resolve(gasEstimation);
+                    
+                }, function(error) {
+                    commonService.log.error("Pot.js", "withdraw.estimate(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "error="+error);
                     
                     reject(error);
                 });

@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').controller('potDetailsController', potDetailsController);
     
-    potDetailsController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$stateParams', 'init', 'PotContractService', 'currencyConverterService', 'CURRENCIES', 'Notification', 'commonService'];
+    potDetailsController.$inject  = ['$scope', '$rootScope', '$log', '$state', '$stateParams', '$uibModal', 'init', 'PotContractService', 'currencyConverterService', 'CURRENCIES', 'Notification', 'commonService'];
 
-    function potDetailsController ($scope, $rootScope, $log, $state, $stateParams, init, PotContractService, currencyConverterService, CURRENCIES, Notification, commonService) {
+    function potDetailsController ($scope, $rootScope, $log, $state, $stateParams, $uibModal, init, PotContractService, currencyConverterService, CURRENCIES, Notification, commonService) {
     
         $scope.initialize = function() {
            commonService.log.debug("pot-details-controller.js", "initialize()", "START");
@@ -83,6 +83,40 @@
             }
         };
 		
+		$scope.estimateSendContribution = function() {
+            commonService.log.debug("pot-details-controller.js", "estimateSendContribution()", "START");
+          
+            if ($scope.form.$valid && !$scope.pot.ended) {
+
+                PotContractService.sendContribution.estimate($scope.address, $scope.contribution.username, $scope.contribution.message, $rootScope.account.address, $scope.contribution.amountEther).then(function(gasEstimation) {   
+
+                    commonService.log.debug("pot-details-controller.js", "estimateSendContribution()", "END", "gasEstimation="+gasEstimation);
+					
+					$uibModal.open({
+						templateUrl	: 'views/modal-alert.html',
+						controller	: 'modalAlertController',
+						size		: 'lg',
+						resolve		: {
+							title	: function () {
+								return "Gas estimation";
+							}, 
+							message	: function () {
+								return "This transaction has an gas estimation of " +gasEstimation+ " ether(s)";
+							}
+						}
+					}).result.then(function (result) {
+						$scope.sendContribution();
+					});
+                    
+                }, function(error) {
+                    commonService.log.error("pot-details-controller.js", "estimateSendContribution()", "END", "error="+error);
+                });
+
+            } else {
+                $scope.$broadcast('show-errors-check-validity');
+            }
+		};
+		
         $scope.withdraw = function() {
             commonService.log.debug("pot-details-controller.js", "withdraw()", "START");
             
@@ -103,6 +137,40 @@
 				});
 			} else {
 				commonService.log.debug("pot-details-controller.js", "withdraw()", "DEBUG", "Cannot withdraw : pot ended");
+			}
+
+        };
+		
+
+		
+        $scope.estimateWithdraw = function() {
+            commonService.log.debug("pot-details-controller.js", "estimateWithdraw()", "START");
+            
+			if(!$scope.pot.ended) {
+				PotContractService.withdraw.estimate($scope.address, $rootScope.account.address).then(function(gasEstimation) {   
+					commonService.log.debug("pot-details-controller.js", "estimateWithdraw()", "END", "gasEstimation="+gasEstimation);
+					
+					$uibModal.open({
+						templateUrl	: 'views/modal-alert.html',
+						controller	: 'modalAlertController',
+						size		: 'lg',
+						resolve		: {
+							title	: function () {
+								return "Gas estimation";
+							}, 
+							message	: function () {
+								return "This transaction has an gas estimation of " +gasEstimation+ " ether(s)";
+							}
+						}
+					}).result.then(function (result) {
+						$scope.withdraw();
+					});
+					
+				}, function(error) {
+					commonService.log.error("pot-details-controller.js", "estimateWithdraw()", "END", "error="+error);
+				});
+			} else {
+				commonService.log.debug("pot-details-controller.js", "estimateWithdraw()", "DEBUG", "Cannot withdraw : pot ended");
 			}
 
         };

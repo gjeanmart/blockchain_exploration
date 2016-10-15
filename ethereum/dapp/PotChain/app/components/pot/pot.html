@@ -1,5 +1,3 @@
-
-<h2>{{pot.name}}</h2>
 	
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -7,7 +5,7 @@
 			<div class="col-lg-12">
 				<div class="col-xs-12 col-sm-4">
 					<figure>
-						<img class="img-circle img-responsive" alt="" src="http://placehold.it/300x300">
+						<img gravatar-src="address" gravatar-size="300" class="img-circle img-responsive">
 					</figure>
 		  
 					<div class="row">
@@ -34,13 +32,17 @@
 							</div>
 						</li>
 						<li class="list-group-item">
-							<button type="button" 
-									ng-disabled="!(pot.total >= pot.goal || pot.endDate < today)"
-									class="btn btn-primary"
-									ng-click="withdraw()"
-									 ng-if="pot.recipient == account.address && !pot.ended">
-								<span class="glyphicon glyphicon-star-empty"> Withdraw</span>
-							</button>
+						
+							<div class="btn-group" ng-if="pot.recipient == account.address && !pot.ended">
+								<button type="button" class="btn btn-primary" ng-click="withdraw()" ng-disabled="!(pot.total >= pot.goal || pot.endDate < today)"><span class="glyphicon glyphicon-star-empty"> Withdraw</button>
+								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" ng-if="(pot.total >= pot.goal || pot.endDate < today)">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu" ng-if="(pot.total >= pot.goal || pot.endDate < today)">
+									<li><a ng-click="estimateWithdraw()" style="cursor:pointer">Estimate cost</a></li>
+								</ul>
+							</div>
+						
 							<button type="button" 
 									class="btn btn-error"
 									style="cursor:auto"
@@ -111,14 +113,25 @@
 						  required></textarea>
 			</div>
 			<br>
-			<button ng-click="sendContribution()" class="btn btn-primary btn-sm pull-right" ng-class="(!pot.ended) ? 'active' : 'disabled'">Send a contribution</button>
+
+			<div class="btn-group pull-right">
+				<button type="button" class="btn btn-primary" ng-class="(!pot.ended) ? 'active' : 'disabled'" ng-click="sendContribution()">Send a contribution</button>
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" ng-show="!pot.ended">
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu" ng-show="!pot.ended">
+					<li><a ng-click="estimateSendContribution()" style="cursor:pointer">Estimate cost</a></li>
+				</ul>
+			</div>
+			
+			
 		</form>
 		<div class="clearfix"></div>
 		<hr>
 		<ul class="media-list">
 			<li class="media" ng-repeat="contribution in contributions">
-				<a href="#" class="pull-left">
-					<img src="https://minotar.net/avatar/Ewwe" alt="" class="img-circle" height="50px">
+				<a class="pull-left">
+					<img gravatar-src="contribution.sender" gravatar-size="50" class="img-circle">
 				</a>
 				<div class="media-body">
 					<span class="text-muted pull-right">
