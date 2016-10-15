@@ -1,7 +1,7 @@
 
 Install parity (Ubuntu)
 
-1. Install Rust language
+1-Install Rust language
 ```
 # curl https://sh.rustup.rs -sSf | sh
 # source $HOME/.cargo/env
@@ -10,7 +10,7 @@ Install parity (Ubuntu)
 ```
 
 
-2. Install Cargo
+2-Install Cargo
 ```
 # wget https://launchpad.net/ubuntu/+source/cargo/0.9.0-1/+build/9706103/+files/cargo_0.9.0-1_amd64.deb
 # dpkg -i cargo_0.9.0-1_amd64.deb
@@ -20,7 +20,7 @@ Install parity (Ubuntu)
 ```
 
 
-3. Install Parity
+3-Install Parity
 ```
 # sudo cargo install --git https://github.com/ethcore/parity.git parity
 ```
