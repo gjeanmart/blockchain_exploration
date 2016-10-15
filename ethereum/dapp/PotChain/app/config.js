@@ -24,7 +24,11 @@
                                         }])
     .constant('CURRENCIES'          , [ {
                                             id      : 'ETH',
-                                            name    : 'Ether',
+                                            name    : 'Ether'
+                                        },{
+                                            id      : 'BTC',
+                                            name    : 'Bitcoin',
+											symbol	: '฿'
                                         },{
                                             id      : 'USD',
                                             name    : 'US Dollar',

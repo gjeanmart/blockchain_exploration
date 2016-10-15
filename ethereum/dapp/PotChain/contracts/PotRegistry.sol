@@ -80,7 +80,7 @@ contract PotRegistry {
 		bytes32[] 	memory potDescArray		= new bytes32[](length);
 
 		// Calculate the window
-		for (var i = (_pageNo - 1) * length; i < _pageNo * length; i++) { 
+		for (uint i = (_pageNo - 1) * length; i < _pageNo * length; i++) { 
 			address potAddress = potsID[i];
 			PotMetadata memory pot = pots[potAddress];
 		
