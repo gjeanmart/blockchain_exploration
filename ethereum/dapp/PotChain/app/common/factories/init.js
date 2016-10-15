@@ -23,13 +23,14 @@
 			// Is connected ??
             commonService.log.debug("init.js", "init()", "DEBUG", "IS CONNECTED ? " + web3.isConnected());
 			if(!web3.isConnected()) {
-				            $state.go('error', {
+				$state.go('error', {
                     error : {
                         code        : 1,
                         message     : "NOT CONNECTED TO THE ETHEREUM NETWORK. INSTALL A CLIENT (MIST or METAMASK for example)"
                     }
                 });
                 
+				return ;
 			}
 			
 			// Current provider ?

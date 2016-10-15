@@ -57,10 +57,10 @@
             
             /*******************************************************
             * ERROR
-            ******************************************************
+            *******************************************************/
             .state('error', {
                 url         : '/error',
-                templateUrl : 'error.html',
+                templateUrl : 'views/error.html',
                 controller  : 'errorController',
                 params      : {
                     error       : {
@@ -68,7 +68,7 @@
                         message     : 'no error'
                     }
                 }
-            });*/
+            });
     });
 
 })();

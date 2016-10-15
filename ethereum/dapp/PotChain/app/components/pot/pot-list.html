@@ -13,6 +13,9 @@
 				<table id="table" ng-table="table" show-filter="false" class="table table-striped table-bordered">
 					<tbody>
 						<tr ng-repeat="pot in $data">
+							<td>
+						        <img gravatar-src="pot.address" gravatar-size="30" class="img-circle">
+							</td>
 							<td data-title="'Address'">
 						        {{pot.address}}
 							</td>

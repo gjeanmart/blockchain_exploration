@@ -3,6 +3,7 @@ module.exports = {
 	/* HTML */
     "index.html"			: "index.html",
     "views/home.html"		: "components/home/home.html",
+    "views/error.html"		: "components/error/error.html",
     "views/pot-list.html"	: "components/pot/pot-list.html",
     "views/pot-create.html"	: "components/pot/pot-create.html",
     "views/pot.html"		: "components/pot/pot.html",
@@ -52,6 +53,7 @@ module.exports = {
 		// Controllers
 		"common/controller/modal-alert-controller.js",
 		"components/home/home-controller.js",
+		"components/error/error-controller.js",
 		"components/pot/pot-list-controller.js",
 		"components/pot/pot-create-controller.js",
 		"components/pot/pot-details-controller.js"
