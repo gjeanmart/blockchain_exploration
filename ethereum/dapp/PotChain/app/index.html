@@ -32,13 +32,14 @@
 				<ul class="nav navbar-nav">
 					<li ui-sref-active="active"><a ui-sref="home">Home</a></li>
 					<li ui-sref-active="active"><a ui-sref="pot-list">Pots</a></li>
+					<li ui-sref-active="active"><a ui-sref="about">About</a></li>
 				</ul>
 				<div class="pull-right" style="margin-top: 10px;">
 					<div class="btn-group">
 						<button class="btn btn-warning" type="button" style="cursor:auto">{{network.name}} - {{blockNumber}}</button>
 						
 						<button class="btn btn-warning" type="button" ng-click="reloadBlockNumber()">
-							<span class="glyphicon glyphicon-refresh" style="cursor:pointer" ng-click="reloadBlockNumber()"></span>
+							<span class="glyphicon glyphicon-refresh"></span>
 						</button>
 	
 					</div>
@@ -70,8 +71,8 @@
 								ng-readonly="true" />
 								
 						
-						<span class="input-group-addon">
-								<span class="glyphicon glyphicon-refresh" style="cursor:pointer" ng-click="reloadBalance()"></span>
+						<span class="input-group-addon" ng-click="reloadBalance()">
+								<span class="glyphicon glyphicon-refresh" style="cursor:pointer"></span>
 						</span>
 					</div>
 				</div>
