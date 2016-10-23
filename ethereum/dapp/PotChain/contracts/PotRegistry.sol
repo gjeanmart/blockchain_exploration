@@ -26,8 +26,8 @@ contract PotRegistry {
 	// Variables
 	mapping(address => PotMetadata) pots;
 	mapping(uint 	=> address) 	potsID;
-	uint 						 	nbPots;
-	address 					 	lastCreated;
+	uint 						 	public nbPots;
+	address 					 	public lastCreated;
 	/***********************/
 	
 	
@@ -46,6 +46,7 @@ contract PotRegistry {
 		potsID[nbPots]		= newPotAddress;
 		
 		nbPots += 1;
+		lastCreated = newPotAddress;
 		
 		return newPotAddress;
 	}
@@ -60,27 +61,15 @@ contract PotRegistry {
 
 	function getPots(uint _pageNo, uint _pageSize) constant returns (address[], bytes32[], bytes32[], uint) {
 	
-		// Default values
-		if(_pageNo < 1) {
-			_pageNo = DEFAULT_PAGE_NO;
-		}
-		if(_pageSize < 1) {
-			_pageSize = DEFAULT_PAGE_SIZE;
-		}
-		
-		// Calculate final length
-		uint length = nbPots;
-		if(length > _pageSize) {
-			length = _pageSize;
-		}
+		var (start, end) = calculateWindow(_pageNo, _pageSize);
 		
 		// Init outout arrays
-		address[] 	memory potAddressArray 	= new address[](length);
-		bytes32[] 	memory potNameArray 	= new bytes32[](length);
-		bytes32[] 	memory potDescArray		= new bytes32[](length);
+		address[] 	memory potAddressArray 	= new address[](end-start);
+		bytes32[] 	memory potNameArray 	= new bytes32[](end-start);
+		bytes32[] 	memory potDescArray		= new bytes32[](end-start);
 
 		// Calculate the window
-		for (uint i = (_pageNo - 1) * length; i < _pageNo * length; i++) { 
+		for (uint i = start; i < end; i++) { 
 			address potAddress = potsID[i];
 			PotMetadata memory pot = pots[potAddress];
 		
@@ -93,5 +82,41 @@ contract PotRegistry {
 	}
 	/***********************/
 	
-	
+	/***********************
+	 * Private Functions	   
+	 */
+	 function calculateWindow(uint _pageNo, uint _pageSize) constant returns (uint, uint) { 
+		uint start; 
+		uint end; 
+		
+		if(nbPots == 0) {
+			return (0,0);
+		}
+		
+		// Default values
+		if(_pageNo < 1) {
+			_pageNo = DEFAULT_PAGE_NO;
+		}
+		if(_pageSize < 1) {
+			_pageSize = DEFAULT_PAGE_SIZE;
+		}
+		
+		// Calculate min bound
+		start = (_pageNo - 1) * _pageSize;
+		
+		// Calculate max bound
+		if(int(nbPots - (_pageNo * _pageSize)) > 0) {
+			end = (_pageNo * _pageSize);
+		} else {
+			end = nbPots; 
+		}
+		
+		// Out of bound
+		if(start > end) {
+			return (0,0);
+		}
+		
+		return (start, end);
+	}
+	/***********************/
 }
