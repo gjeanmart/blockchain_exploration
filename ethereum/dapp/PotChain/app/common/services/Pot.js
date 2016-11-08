@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').service('PotContractService', PotContractService);
     
-    PotContractService.$inject  = ['$rootScope', '$log', '$q', '$filter', 'commonService'];
+    PotContractService.$inject  = ['$rootScope', '$log', '$q', '$filter', 'commonService', 'ethereumService'];
 
-    function PotContractService ($rootScope, $log, $q, $filter, commonService) {
+    function PotContractService ($rootScope, $log, $q, $filter, commonService, ethereumService) {
         var service = this;
         
         service.getContract = function(contractAddress) {
@@ -57,7 +57,9 @@
                 service.getContract(contractAddress).sendMessage(username, message, {from: senderAddress}).then(function(transaction) {
                     commonService.log.debug("Pot.js", "sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")", "END", "transaction="+transaction);
                     
-                    resolve(transaction);
+					ethereumService.getTransactionReceipt(transaction, $rootScope.gasPrice).then(function(receipt) {
+						resolve(receipt);
+					});
                     
                 }, function(error) {
                     commonService.log.error("Pot.js", "sendMessage(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+")", "END", "error="+error);
@@ -109,7 +111,9 @@
                 service.getContract(contractAddress).contribute(username, message, {from: senderAddress, value: web3.toWei(amount, "ether")}).then(function(transaction) {
                     commonService.log.debug("Pot.js", "sendContribution(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "END", "transaction="+transaction);
                     
-                    resolve(transaction);
+					ethereumService.getTransactionReceipt(transaction, $rootScope.gasPrice).then(function(receipt) {
+						resolve(receipt);
+					});
                     
                 }, function(error) {
                     commonService.log.error("Pot.js", "sendContribution(contractAddress="+contractAddress+", senderAddress="+senderAddress+", username="+username+", message="+message+", amount="+amount+")", "END", "error="+error);
@@ -183,7 +187,9 @@
                 service.getContract(contractAddress).withdraw({from: senderAddress}).then(function(transaction) {
                     commonService.log.debug("Pot.js", "withdraw(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "transaction="+transaction);
                     
-                    resolve(transaction);
+					ethereumService.getTransactionReceipt(transaction, $rootScope.gasPrice).then(function(receipt) {
+						resolve(receipt);
+					});
                     
                 }, function(error) {
                     commonService.log.error("Pot.js", "withdraw(contractAddress="+contractAddress+", senderAddress="+senderAddress+")", "END", "error="+error);

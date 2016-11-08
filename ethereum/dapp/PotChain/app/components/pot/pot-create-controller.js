@@ -61,10 +61,10 @@
             if ($scope.form.$valid) {  
 				Notification.primary({message: "Transaction in progress ... <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/address/"+$rootScope.account.address+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", delay: null, closeOnClick: false});
 			
-                PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(transaction) {            
-                    commonService.log.debug("pot-create-controller.js", "createPot()", "END", "transaction="+transaction);
+                PotRegistryContractService.createPot($rootScope.account.address, $scope.pot.name, $scope.pot.description, $scope.pot.endDate.getTime(), $scope.pot.goalEther, $scope.pot.recipient).then(function(receipt) {            
+                    commonService.log.debug("pot-create-controller.js", "createPot()", "END", "transaction="+receipt.transactionID);
 
-                    Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/tx/"+transaction+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a>", replaceMessage: true, delay: 10000, closeOnClick: false});
+                    Notification.success({message: "Transaction completed <a type='button' class='btn btn-link' href='"+$rootScope.network.eherscan+"/tx/"+receipt.transactionID+"' target='_blank'><span class='glyphicon glyphicon-info-sign'></span></a> [Gas used: " + receipt.gasUsed + "]", replaceMessage: true, delay: 10000, closeOnClick: false});
                     
 					$rootScope.reloadBalance();
 					

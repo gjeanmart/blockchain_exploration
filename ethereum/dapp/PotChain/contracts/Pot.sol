@@ -155,7 +155,7 @@ contract Pot is Killable {
     }
 
      
-    function contribute(bytes32 _username, bytes32 _message) isActive returns (bool) {
+    function contribute(bytes32 _username, bytes32 _message) payable isActive returns (bool) {
         Contribution memory contribution;
         
         contribution.from           = msg.sender;

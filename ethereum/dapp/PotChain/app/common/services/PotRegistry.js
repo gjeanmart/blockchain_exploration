@@ -6,9 +6,9 @@
      ******************************************/
     angular.module('PotChain').service('PotRegistryContractService', PotRegistryContractService);
     
-    PotRegistryContractService.$inject  = ['$rootScope', '$log', '$q','commonService'];
+    PotRegistryContractService.$inject  = ['$rootScope', '$log', '$q','commonService', 'ethereumService'];
 
-    function PotRegistryContractService ($rootScope, $log, $q, commonService) {
+    function PotRegistryContractService ($rootScope, $log, $q, commonService, ethereumService) {
         var service = this;
 
         service.contract = PotRegistry.deployed();
@@ -20,7 +20,10 @@
                 service.contract.createPot(name, description, endDate / 1000, web3.toWei(goal, "ether"), recipient, {from: address}).then(function(transaction) {
                     commonService.log.debug("PotRegistry.js", "createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+", recipient="+recipient+")", "END", "transaction="+transaction);
                     
-                    resolve(transaction);
+					ethereumService.getTransactionReceipt(transaction, $rootScope.gasPrice).then(function(receipt) {
+						resolve(receipt);
+					});
+					
                 }, function(error) {
                     commonService.log.error("PotRegistry.js", "createPot(address="+address+", name="+name+", description="+description+", endDate="+endDate+", goal="+goal+", recipient="+recipient+")", "END", "error="+error);
                     reject(error);
