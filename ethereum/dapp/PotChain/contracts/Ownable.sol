@@ -1,3 +1,5 @@
+pragma solidity ^0.4.4;
+
 contract Ownable {
   address public owner;
 
@@ -7,7 +9,7 @@ contract Ownable {
 
   modifier onlyOwner() {
     if (msg.sender == owner) {
-      _
+      _;
 	}
   }
 }

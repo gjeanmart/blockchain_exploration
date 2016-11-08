@@ -1,3 +1,5 @@
+pragma solidity ^0.4.4;
+
 import './Killable.sol';
 
 /**
@@ -47,12 +49,12 @@ contract Pot is Killable {
      */
     modifier isActive {
         if(endDate > now && ended == false) {
-            _
+            _;
         }
     }
     modifier onlyRecipient {
         if (msg.sender == recipient) {
-            _
+            _;
         }
     }
     /***********************/
