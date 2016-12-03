@@ -21,6 +21,10 @@
                                             id      : 2,
                                             name    : 'TEST MORDEN',
                                             eherscan: 'https://testnet.etherscan.io/'
+                                        }, {
+                                            id      : 3,
+                                            name    : 'TEST ROPSTEN',
+                                            eherscan: 'https://testnet.etherscan.io/'
                                         }])
     .constant('CURRENCIES'          , [ {
                                             id      : 'ETH',
