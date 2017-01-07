@@ -18,13 +18,13 @@
 - Power it on
 
 - Network settings
-You need to figure out which IP has been addressed to your device (ethnode-xxxxxx) : 192.168.0.XXX
+You need to figure out which IP has been addressed to your device : 192.168.0.XXX
 
 - Open a SSH client (Putty) and connect to the device [username: pi | password: raspberry]
 
 - Change the password
 ```
-pi@ethnode-xxxxxx:~ $ passwd
+$ passwd
 Changing password for pi.
 (current) UNIX password: raspberry
 Enter new UNIX password: ******
@@ -32,8 +32,39 @@ Retype new UNIX password: ******
 passwd: password updated successfully
 ```
 
+## Ethereum Node: Parity
+
 - Managing the daemon
 Parity runs as a bootup service so it wakes up automatically. You can stop, start, restart and check the console output using systemctl:
 ```
-sudo systemctl stop|start|restart|status parity
+$ sudo systemctl stop|start|restart|status parity
+```
+
+
+- Parity Settings
+```
+$ vi /etc/parity/parity.conf
+ARGS=--testnet --unlock "*************"  --password "/etc/parity/*************.password" --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts="all"  --no-dapps
+```
+
+
+## Development environment
+
+**Prerequisite**
+- Install NodeJS and NPM
+```
+$ sudo apt-get install nodejs npm
+```
+
+
+**Truffle**
+https://github.com/ConsenSys/truffle
+```
+$ npm install -g truffle
+```
+
+**TestRPC**
+https://github.com/ethereumjs/testrpc
+```
+npm install -g ethereumjs-testrpc
 ```
