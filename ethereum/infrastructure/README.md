@@ -51,9 +51,9 @@ ARGS=--testnet --unlock "*************"  --password "/etc/parity/*************.p
 ## Development environment
 
 **Prerequisite**
-- Install NodeJS and NPM
+- Install Git, NodeJS and NPM
 ```
-$ sudo apt-get install nodejs npm
+$ sudo apt-get install nodejs nodejs-legacy npm git
 ```
 
 
