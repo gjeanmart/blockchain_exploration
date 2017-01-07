@@ -44,7 +44,7 @@ $ sudo systemctl stop|start|restart|status parity
 - Parity Settings
 ```
 $ vi /etc/parity/parity.conf
-ARGS=--testnet --unlock "*************"  --password "/etc/parity/*************.password" --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts="all"  --no-dapps
+ARGS='--testnet --unlock "*************"  --password "/etc/parity/*************.password" --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts=all --no-dapps'
 ```
 
 
@@ -53,7 +53,8 @@ ARGS=--testnet --unlock "*************"  --password "/etc/parity/*************.p
 **Prerequisite**
 - Install Git, NodeJS and NPM
 ```
-$ sudo apt-get install nodejs nodejs-legacy npm git
+$ $ curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+$ sudo apt-get install nodejs npm git
 ```
 
 
