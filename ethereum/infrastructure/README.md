@@ -32,7 +32,9 @@ Retype new UNIX password: ******
 passwd: password updated successfully
 ```
 
-## Ethereum Node: Parity
+## Ethereum Node:
+
+### Parity
 
 - Managing the daemon
 Parity runs as a bootup service so it wakes up automatically. You can stop, start, restart and check the console output using systemctl:
@@ -45,6 +47,22 @@ $ sudo systemctl stop|start|restart|status parity
 ```
 $ vi /etc/parity/parity.conf
 ARGS='--testnet --unlock "*************"  --password "/etc/parity/*************.password" --jsonrpc-apis "eth,net,web3" --jsonrpc-cors '*' --jsonrpc-interface 0.0.0.0 --jsonrpc-port 8545 --jsonrpc-hosts=all --no-dapps'
+```
+
+
+### GETH
+
+- Managing the daemon
+geth runs as a bootup service so it wakes up automatically. You can stop, start, restart and check the console output using systemctl:
+```
+$ sudo systemctl stop|start|restart|status geth
+```
+
+
+- Parity Settings
+```
+$ vi /etc/geth/geth.conf
+ARGS=''
 ```
 
 
