@@ -78,9 +78,12 @@ swarm --bzzaccount "0xADDRESS" --datadir /home/pi/swarm/ --keystore /home/pi/swa
 ```
 
 - Read a file
-Im the browser
-http://192.168.0.22:8500/bzz:/photoalbum.eth/
-http://192.168.0.22:8500/bzz:/%HASH%
+
+In the browser
+
+o http://192.168.0.22:8500/bzz:/photoalbum.eth/
+
+o http://192.168.0.22:8500/bzz:/%HASH%
 
 Upload a file
 ```
@@ -93,7 +96,7 @@ $ ./go-ethereum/swarm/cmd/bzzup.sh /path/to/myfile
 **Prerequisite**
 - Install Git, NodeJS and NPM
 ```
-$ $ curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+$ curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 $ sudo apt-get install nodejs npm git
 ```
 
