@@ -52,6 +52,17 @@ ARGS='--testnet --unlock "*************"  --password "/etc/parity/*************.
 
 ### GETH
 
+- Create an account
+```
+geth account new --testnet --datadir /home/pi/swarm/ 
+```
+
+- GETH Settings
+```
+$ vi /etc/geth/geth.conf
+ARGS='--datadir /home/pi/swarm/ --testnet  --cache 256 --unlock 0 --password <(echo -n "*****") --rpc --rpcaddr 0.0.0.0'
+```
+
 - Managing the daemon
 geth runs as a bootup service so it wakes up automatically. You can stop, start, restart and check the console output using systemctl:
 ```
@@ -59,11 +70,7 @@ $ sudo systemctl stop|start|restart|status geth
 ```
 
 
-- Parity Settings
-```
-$ vi /etc/geth/geth.conf
-ARGS=''
-```
+## Development environment
 
 
 ## Development environment
