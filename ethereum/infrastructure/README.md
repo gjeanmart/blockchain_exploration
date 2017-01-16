@@ -87,8 +87,7 @@ o http://192.168.0.22:8500/bzz:/%HASH%
 
 Upload a file
 ```
-$ git clone https://github.com/ethersphere/go-ethereum.git
-$ ./go-ethereum/swarm/cmd/bzzup.sh /path/to/myfile
+$ swarm --recursive --defaultpath site/index.html --bzzapi http://0.0.0.0:8500/ up site/
 ```
 
 ## Development environment
