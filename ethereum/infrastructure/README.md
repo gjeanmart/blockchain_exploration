@@ -60,18 +60,33 @@ geth account new --testnet --datadir /home/pi/swarm/
 - GETH Settings
 ```
 $ vi /etc/geth/geth.conf
-ARGS='--datadir /home/pi/swarm/ --testnet  --cache 256 --unlock 0 --password <(echo -n "*****") --rpc --rpcaddr 0.0.0.0'
+ARGS=--datadir /home/pi/swarm/ --testnet  --cache 256 --unlock 0 --password <(echo -n "*****") --rpc --rpcaddr 0.0.0.0
 ```
 
 - Managing the daemon
+
 geth runs as a bootup service so it wakes up automatically. You can stop, start, restart and check the console output using systemctl:
 ```
 $ sudo systemctl stop|start|restart|status geth
 ```
 
 
-## Development environment
+## SWARM (Decentralized File storage)
+- Daemon
+```
+swarm --bzzaccount "0xADDRESS" --datadir /home/pi/swarm/ --keystore /home/pi/swarm/testnet/keystore --ethapi /home/pi/swarm/testnet/geth.ipc --bzzapi http://0.0.0.0:8500
+```
 
+- Read a file
+Im the browser
+http://192.168.0.22:8500/bzz:/photoalbum.eth/
+http://192.168.0.22:8500/bzz:/%HASH%
+
+Upload a file
+```
+$ git clone https://github.com/ethersphere/go-ethereum.git
+$ ./go-ethereum/swarm/cmd/bzzup.sh /path/to/myfile
+```
 
 ## Development environment
 
